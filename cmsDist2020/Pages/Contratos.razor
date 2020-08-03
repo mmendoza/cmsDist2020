@@ -2,6 +2,7 @@
 @inject cmsDist2020.Data.AppData AppData
 @using cmsDist2020.Models
 @inject cmsDist2020.Service.ClientesService clientesService
+@inject NavigationManager navigationManager
 
 <h3>Detalle de Contratos</h3>
 
@@ -12,12 +13,16 @@
 else
 {
     <div class="form-group">
-        <a class="btn btn-info" href="vercontratos/@ProductoId/0">Crear Nuevo Contrato</a>
+        <MatButton Raised="true" OnClick="@CreaNuevo" Disabled="true">Registrar Nuevo</MatButton>
+        @*<a class="btn btn-info" href="vercontratos/@ProductoId/0">Crear Nuevo Contrato</a>*@
     </div>
+
+
     <MatTable Items="@productosModels" ShowFooter="false" ShowPaging="false" PageSize=10>
         <MatTableHeader>
             <th>Acciones PIN</th>
             <th>Modificar</th>
+            <th>Producto</th>
             @*<th>Id</th>*@
             <th>Cliente</th>
             <th>Direccion</th>
@@ -26,56 +31,62 @@ else
             <th>Email 2</th>
             <th>Email 3</th>
             <th>Colaborador</th>
-            <th>Producto</th>
             <th>N° Contrato</th>
             <th>N° Cuotas</th>
         </MatTableHeader>
         <MatTableRow>
-            @if (@context.NroPin == "")
-                {
-                <td>
-                    <div class="btn-group">
-                        <a class="btn btn-primary" href="/generaPin/@ProductoId/@context.Id/0">
-                            <i class="icon-refresh icon-spin"></i> PIN
-                        </a>
-                        <a class="btn btn-danger"><i class="icon-trash icon-large"></i> PIN</a>
-                        <a class="btn btn-secondary"><i class="icon-repeat"></i> PIN</a>
-                    </div>
-                </td>
-                }
-                else
-                {
-                <td>
-                    <div class="btn-group">
-                        <a class="btn btn-primary"><i class="icon-refresh icon-spin"></i> Genera PIN</a>
-                        <a class="btn btn-danger" href="/GeneraPin/@ProductoId/@context.Id/1"><i class="icon-trash icon-large"></i> PIN</a>
-                        <a class="btn btn-secondary" href="/GeneraPin/@ProductoId/@context.Id/2"><i class="icon-repeat"></i> PIN</a>
-                    </div>
-                </td>
-                }
             <td>
-                <a class="btn btn-primary" href="/vercontratos/@ProductoId/@context.Id">
-                    <i class="icon-comment"></i> Editar
-                </a>
+                @if (@context.NroPin == "")
+                    {
+                    <MatIconButton Disabled="false" Raised="true" OnClick="@(() => Crear(@context.Id))">
+                        <MatIcon>@MatIconNames.Create</MatIcon>
+                    </MatIconButton>
+                    <MatIconButton Disabled="true" Raised="true" OnClick="@(() => Habilitar(@context.Id))">
+                        <MatIcon>@MatIconNames.Restore</MatIcon>
+                    </MatIconButton>
+                    <MatIconButton Disabled="true" Raised="true" OnClick="@(() => Deshabilitar(@context.Id))">
+                        <MatIcon>@MatIconNames.Delete_forever</MatIcon>
+                    </MatIconButton>
+                    }
+                    else
+                    {
+                    <MatIconButton Disabled="true" Raised="true" OnClick="@(() => Crear(@context.Id))">
+                        <MatIcon>@MatIconNames.Create</MatIcon>
+                    </MatIconButton>
+                    <MatIconButton Disabled="false" Raised="true" OnClick="@(() => Habilitar(@context.Id))">
+                        <MatIcon>@MatIconNames.Restore</MatIcon>
+                    </MatIconButton>
+                    <MatIconButton Disabled="false" Raised="true" OnClick="@(() => Deshabilitar(@context.Id))">
+                        <MatIcon>@MatIconNames.Delete_forever</MatIcon>
+                    </MatIconButton>
+                    }
             </td>
-            @*<td>@context.Id</td>*@
-            <td>@context.Cliente</td>
-            <td>@context.Direccion</td>
-            <td>@context.Telefono</td>
-            <td>@context.Correo01</td>
-            <td>@context.Correo02</td>
-            <td>@context.Correo03</td>
-            <td>@context.Colaborador</td>
-            <td>@context.Producto</td>
-            <td>@context.NroContrato</td>
-            <td>@context.NroCuotas</td>
-        </MatTableRow>
+                <td>
+                    <a class="btn btn-primary" href="/vercontratos/@ProductoId/@context.Id">
+                        <i class="icon-comment"></i> Editar
+                    </a>
+                </td>
+                <td>@context.Producto</td>
+                <td>@context.Cliente</td>
+                <td>@context.Direccion</td>
+                <td>@context.Telefono</td>
+                <td>@context.Correo01</td>
+                <td>@context.Correo02</td>
+                <td>@context.Correo03</td>
+                <td>@context.Colaborador</td>
+                <td>@context.NroContrato</td>
+                <td>@context.NroCuotas</td>
+            </MatTableRow>
     </MatTable>
 }
 @code {
     [Parameter]
     public int ProductoId { get; set; }
-
+//
+//  Fuentes de los iconos de los botones
+//
+//    https://material.io/resources/icons/?style=baseline
+//
     public List<ProductosModel> productosModels = new List<ProductosModel>();
     string _error_ = "";
 
@@ -95,5 +106,22 @@ else
         }
     }
 
+    public void CreaNuevo(MouseEventArgs e)
+    {
+        navigationManager.NavigateTo("vercontratos/" + ProductoId.ToString() + "/0");
+    }
 
+    private void Crear(int idProduct)
+    {
+        navigationManager.NavigateTo("contratos/" + ProductoId.ToString() + "/0");
+    }
+
+    private void Habilitar(int idProduct)
+    {
+        //navigationManager.NavigateTo("contratos/" + idProdcuct.ToString());
+    }
+    private void Deshabilitar(int idProduct)
+    {
+        //navigationManager.NavigateTo("contratos/" + idProdcuct.ToString());
+    }
 }

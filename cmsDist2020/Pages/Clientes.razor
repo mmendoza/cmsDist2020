@@ -54,58 +54,6 @@ else
             <th>@context.Estado</th>
         </MatTableRow>
     </MatTable>
-
-
-    @*<div class="table-responsive">
-        <table class="table table-dark">
-            <thead>
-                <tr>
-                    <th>Id</th>
-                    <th>Ruc / Dni</th>
-                    <th>Nombres</th>
-                    <th>Apellido Paterno</th>
-                    <th>Apellido Materno</th>
-                    <th>Dirección</th>
-                    <th>Id_Distrito</th>
-                    <th>Distrito</th>
-                    <th>Provincia</th>
-                    <th>Departamento</th>
-                    <th>Teléfonos</th>
-                    <th>Email 1</th>
-                    <th>Email 2</th>
-                    <th>Email 3</th>
-                    <th>IdEstado</th>
-                    <th>Estado</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var clientes in clientes_model)
-                {
-                    <tr>
-                        <th>@clientes.Id</th>
-                        <th>@clientes.RucDni</th>
-                        <th>@clientes.Nombre</th>
-                        <th>@clientes.ApePat</th>
-                        <th>@clientes.Apemat</th>
-                        <th>@clientes.Direccion</th>
-                        <th>@clientes.Id_Distrito</th>
-                        <th>@clientes.Dist</th>
-                        <th>@clientes.Prov</th>
-                        <th>@clientes.Dep</th>
-                        <th>@clientes.Telefonos</th>
-                        <th>@clientes.Email01</th>
-                        <th>@clientes.Email02</th>
-                        <th>@clientes.Email03</th>
-                        <th>@clientes.IdEstado</th>
-                        <th>@clientes.Estado</th>
-                        <td>
-                            <a href="/clientes/edit/@clientes.Id">Editar</a>
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-    </div>*@
 }
 @code {
     IEnumerable<ClientesModel> clientes_model;

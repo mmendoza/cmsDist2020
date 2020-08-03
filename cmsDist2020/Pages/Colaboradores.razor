@@ -5,59 +5,45 @@
 @inject NavigationManager NavigationManager
 
 <h3>Colaboradores</h3>
-
-@if (AppData.Id == 0)
+@if (colaborador == null)
 {
-    NavigationManager.NavigateTo("/error");
+    <img src="./Img/cargando.gif" />
 }
 else
 {
-    @if (colaboradores == null)
-    {
-        <img src="./Img/cargando.gif" />
-    }
-    else
-    {
         <div class="form-group">
             <a class="btn btn-info" href="colaboradores/crear">Crear Colaborador</a>
         </div>
-        <table class='table'>
-            <thead>
-                <tr>
-                    <th>Id</th>
-                    <th>Nombres</th>
-                    <th>Dirección</th>
-                    <th>Email</th>
-                    <th>Teléfonos</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var colaboraderes in colaboradores)
-                {
-                    <tr>
-                        <th>@colaboraderes.Id</th>
-                        <th>@colaboraderes.Nombre</th>
-                        <th>@colaboraderes.Direccion</th>
-                        <th>@colaboraderes.Correo</th>
-                        <th>@colaboraderes.Telefono</th>
-                        <td>
-                            <a href="/colaboradores/edit/@colaboraderes.Id">Editar</a>
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-    }
+        <MatTable Items="@colaborador" Class="align-self-auto" Striped="true" ShowFooter="false" ShowPaging="true" PageSize=10>
+            <MatTableHeader>
+                <th>Acción</th>
+                <th>Nombre(s)</th>
+                <th>Dirección</th>
+                <th>Email</th>
+                <th>Teléfonos</th>
+            </MatTableHeader>
+            <MatTableRow>
+                <td>
+                    <a class="btn btn-primary" href="/colaboradores/edit/@context.Id"><i class="icon-comment"></i> Editar</a>
+                </td>
+                @*<th>@context.Id</th>*@
+                <th>@context.Nombre</th>
+                <th>@context.Direccion</th>
+                <th>@context.Correo</th>
+                <th>@context.Telefono</th>
+            </MatTableRow>
+        </MatTable>
 }
+
 @code {
-    IEnumerable<ColaboradorModel> colaboradores;
+    IEnumerable<ColaboradorModel> colaborador;
     string _error_ = "";
 
     protected override async Task OnInitializedAsync()
     {
         try
         {
-            colaboradores = await clientesService.GetColaboradores(AppData.Id);
+            colaborador = await clientesService.GetColaboradores(AppData.Id);
         }
         catch (Exception ex)
         {

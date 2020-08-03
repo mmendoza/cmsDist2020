@@ -2,7 +2,7 @@
 @inject cmsDist2020.Data.AppData AppData
 @using cmsDist2020.Models
 @inject cmsDist2020.Service.ProductService productService
-@inject NavigationManager NavigationManager
+@inject NavigationManager navigationManager
 
 <h3>Lista de Productos</h3>
 <p>Bienvenido: @AppData.Nombre</p>
@@ -12,57 +12,29 @@
 }
 else
 {
-    @*<div class="table-responsive">
-        <Table Striped="true" class="table table-sm">
-            <TableHeader>
-                <TableRow>
-                    <TableHeaderCell>Productos</TableHeaderCell>
-                    <TableHeaderCell>Cant.</TableHeaderCell>
-                    <TableHeaderCell>Registrado</TableHeaderCell>
-                    <TableHeaderCell>C PIN</TableHeaderCell>
-                    <TableHeaderCell>C PIN Anulado</TableHeaderCell>
-                    <TableHeaderCell>Acción</TableHeaderCell>
-                </TableRow>
-            </TableHeader>
-            <TableBody>
-                @foreach (var productos in product_model)
-                {
-                    <TableRow>
-                        <TableRowHeader>@productos.Producto</TableRowHeader>
-                        <TableRowCell>@productos.Cantidad</TableRowCell>
-                        <TableRowCell>@productos.Registrado</TableRowCell>
-                        <TableRowCell>@productos.C_Pin</TableRowCell>
-                        <TableRowCell>@productos.C_Pin_Anulado</TableRowCell>
-                        <td>
-                            <a class="btn btn-primary" href='/contratos/@productos.Cod'><i class="icon-comment"></i> Detalle de Contratos</a>
-                        </td>
-                    </TableRow>
-                }
-            </TableBody>
-        </Table>
-    </div>*@
-
     <MatTable Items="@product_model" Class="align-self-stretch" Striped="true" ShowFooter="false" ShowPaging="true" PageSize=10>
-            <MatTableHeader>
-                <th>Producto</th>
-                <th>Cantidad</th>
-                <th>Registrado</th>
-                <th>C Pin</th>
-                <th>C Pin Anulado</th>
-                <th>Acción</th>
-            </MatTableHeader>
-            <MatTableRow>
-                <td>@context.Producto</td>
-                <td>@context.Cantidad</td>
-                <td>@context.Registrado</td>
-                <td>@context.C_Pin</td>
-                <td>@context.C_Pin_Anulado</td>
-                <td>@context.Cod</td>
-                <td>
-                    <a class="btn btn-primary" href='/contratos/@context.Cod'><i class="icon-comment"></i> Detalle de Contratos</a>
-                </td>
-            </MatTableRow>
-        </MatTable>
+        <MatTableHeader>
+            <th>Acciones</th>
+            <th>Producto</th>
+            <th>Cantidad</th>
+            <th>Registrado</th>
+            <th>C Pin</th>
+            <th>C Pin Anulado</th>
+            @*<th>Acción</th>*@
+        </MatTableHeader>
+        <MatTableRow>
+            <td>
+                <MatButton Raised="true" OnClick="@(() => ListaContratos(@context.Cod))">Lista de Contratos</MatButton>
+                @*<a class="btn btn-primary" href='/contratos/@context.Cod'><i class="icon-comment"></i> Detalle de Contratos</a>*@
+            </td>
+            <td>@context.Producto</td>
+            <td>@context.Cantidad</td>
+            <td>@context.Registrado</td>
+            <td>@context.C_Pin</td>
+            <td>@context.C_Pin_Anulado</td>
+            @*<td>@context.Cod</td>*@
+        </MatTableRow>
+    </MatTable>
 }
 
 @code {
@@ -83,5 +55,10 @@ else
         {
             Console.WriteLine("Ejecutando");
         }
+    }
+
+    private void ListaContratos(int idProdcuct)
+    {
+        navigationManager.NavigateTo("contratos/" + idProdcuct.ToString() );
     }
 }

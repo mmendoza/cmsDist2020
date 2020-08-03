@@ -58,7 +58,7 @@ namespace cmsDist2020.Service
                     conn.Open();
                 try
                 {
-                    colaboradores = await conn.QueryAsync<ColaboradorModel>("pa_colaboardor", parameters, commandType: CommandType.StoredProcedure);
+                    colaboradores = await conn.QueryAsync<ColaboradorModel>("pa_colaboradores", parameters, commandType: CommandType.StoredProcedure);
                 }
                 catch (Exception ex)
                 {
@@ -73,7 +73,7 @@ namespace cmsDist2020.Service
             return colaboradores;
         }
 
-        public async Task<List<ProductosModel>> GetProductos(int IdProducto, int IdDistribuidor)
+            public async Task<List<ProductosModel>> GetProductos(int IdProducto, int IdDistribuidor)
         {
             List<ProductosModel> productosModels;
             var parameters = new DynamicParameters();
