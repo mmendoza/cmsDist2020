@@ -1,0 +1,99 @@
+﻿@page "/contratos/{ProductoId:int}"
+@inject cmsDist2020.Data.AppData AppData
+@using cmsDist2020.Models
+@inject cmsDist2020.Service.ClientesService clientesService
+
+<h3>Detalle de Contratos</h3>
+
+@if (productosModels == null)
+{
+    <img src="./Img/cargando.gif" />
+}
+else
+{
+    <div class="form-group">
+        <a class="btn btn-info" href="vercontratos/@ProductoId/0">Crear Nuevo Contrato</a>
+    </div>
+    <MatTable Items="@productosModels" ShowFooter="false" ShowPaging="false" PageSize=10>
+        <MatTableHeader>
+            <th>Acciones PIN</th>
+            <th>Modificar</th>
+            @*<th>Id</th>*@
+            <th>Cliente</th>
+            <th>Direccion</th>
+            <th>Telefono</th>
+            <th>Email 1</th>
+            <th>Email 2</th>
+            <th>Email 3</th>
+            <th>Colaborador</th>
+            <th>Producto</th>
+            <th>N° Contrato</th>
+            <th>N° Cuotas</th>
+        </MatTableHeader>
+        <MatTableRow>
+            @if (@context.NroPin == "")
+                {
+                <td>
+                    <div class="btn-group">
+                        <a class="btn btn-primary" href="/generaPin/@ProductoId/@context.Id/0">
+                            <i class="icon-refresh icon-spin"></i> PIN
+                        </a>
+                        <a class="btn btn-danger"><i class="icon-trash icon-large"></i> PIN</a>
+                        <a class="btn btn-secondary"><i class="icon-repeat"></i> PIN</a>
+                    </div>
+                </td>
+                }
+                else
+                {
+                <td>
+                    <div class="btn-group">
+                        <a class="btn btn-primary"><i class="icon-refresh icon-spin"></i> Genera PIN</a>
+                        <a class="btn btn-danger" href="/GeneraPin/@ProductoId/@context.Id/1"><i class="icon-trash icon-large"></i> PIN</a>
+                        <a class="btn btn-secondary" href="/GeneraPin/@ProductoId/@context.Id/2"><i class="icon-repeat"></i> PIN</a>
+                    </div>
+                </td>
+                }
+            <td>
+                <a class="btn btn-primary" href="/vercontratos/@ProductoId/@context.Id">
+                    <i class="icon-comment"></i> Editar
+                </a>
+            </td>
+            @*<td>@context.Id</td>*@
+            <td>@context.Cliente</td>
+            <td>@context.Direccion</td>
+            <td>@context.Telefono</td>
+            <td>@context.Correo01</td>
+            <td>@context.Correo02</td>
+            <td>@context.Correo03</td>
+            <td>@context.Colaborador</td>
+            <td>@context.Producto</td>
+            <td>@context.NroContrato</td>
+            <td>@context.NroCuotas</td>
+        </MatTableRow>
+    </MatTable>
+}
+@code {
+    [Parameter]
+    public int ProductoId { get; set; }
+
+    public List<ProductosModel> productosModels = new List<ProductosModel>();
+    string _error_ = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            productosModels = await clientesService.GetProductos(ProductoId, AppData.Id);
+        }
+        catch (Exception ex)
+        {
+            _error_ = ex.Message;
+        }
+        finally
+        {
+            Console.WriteLine("Ejecutando");
+        }
+    }
+
+
+}

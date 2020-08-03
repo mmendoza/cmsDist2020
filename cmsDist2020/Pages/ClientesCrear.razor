@@ -1,0 +1,261 @@
+﻿@page "/clientes/crear"
+@using cmsDist2020.Models
+@inject cmsDist2020.Data.AppData AppData
+@inject NavigationManager navigationManager
+@inject cmsDist2020.Service.ClientesAddService clientesAddService
+@inject NavigationManager NavigationManager
+
+<h3>Clientes Crear</h3>
+@if (Dptos == null)
+{
+    <img src="./Img/cargando.gif" />
+}
+else
+{
+    <EditForm Model="cliente" OnValidSubmit="CrearClientes">
+        <DataAnnotationsValidator />
+
+        <div class="form-group">
+            <label>Ruc / Dni:</label>
+            <div>
+                <InputText class="form-control" @bind-Value="@cliente.RucDni" />
+                <ValidationMessage For="@(() => cliente.RucDni)" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label>Nombre(s):</label>
+            <div>
+                <InputText class="form-control" @bind-Value="@cliente.Nombre" />
+                <ValidationMessage For="@(() => cliente.Nombre)" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label>Apellido Paterno:</label>
+            <div>
+                <InputText class="form-control" @bind-Value="@cliente.ApePat" />
+                <ValidationMessage For="@(() => cliente.ApePat)" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label>Apellido Materno:</label>
+            <div>
+                <InputText class="form-control" @bind-Value="@cliente.Apemat" />
+                <ValidationMessage For="@(() => cliente.Apemat)" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label>Direccion:</label>
+            <div>
+                <InputText class="form-control" @bind-Value="@cliente.Direccion" />
+                <ValidationMessage For="@(() => cliente.Direccion)" />
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>Departamento:</label>
+            <InputSelect Class="form-control"
+                         ValueExpression="@(()=>cliente.IdDep)"
+                         ValueChanged="@((string value) => ValorDptoCambiado(value))"
+                         Value="@cliente.IdDep">
+                <option value="">-- Select Departamentos--</option>
+                @foreach (var item in Dptos)
+                {
+                    @if (item.IdDpto == cliente.IdDep)
+                    {
+                        <option selected value="@item.IdDpto">@item.NombDpto</option>
+                    }
+                    else
+                    {
+                        <option value="@item.IdDpto">@item.NombDpto</option>
+                    }
+                }
+            </InputSelect>
+        </div>
+        <div class="form-group">
+            <label>Provincia:</label>
+            <InputSelect Class="form-control"
+                         ValueExpression="@(()=>cliente.IdProv)"
+                         ValueChanged="@((string value) => ValorProvCambiado(value))"
+                         Value="@cliente.IdProv">
+                <option value="">-- Select Provincias--</option>
+                @if (Provs != null)
+                {
+                    @foreach (var item in Provs)
+                    {
+                        @if (item.IdProv == cliente.IdProv)
+                        {
+                            <option selected value="@item.IdProv">@item.NombProv</option>
+                        }
+                        else
+                        {
+                            <option value="@item.IdProv">@item.NombProv</option>
+                        }
+                    }
+                }
+            </InputSelect>
+        </div>
+        <div class="form-group">
+            <label>Distrito:</label>
+            <InputSelect Class="form-control"
+                         @bind-Value="@cliente.IdDist">
+                <option value="">-- Select Distritos--</option>
+                @if (Dists != null)
+                    {
+                    @foreach (var item in Dists)
+                        {
+                        @if (item.IdDist == cliente.IdDist)
+                            {
+                            <option selected value="@item.IdDist">@item.NombDist</option>
+                            }
+                            else
+                            {
+                            <option value="@item.IdDist">@item.NombDist</option>
+                            }
+                        }
+                    }
+            </InputSelect>
+        </div>
+
+        <div class="form-group">
+            <label>Telefonos:</label>
+            <div>
+                <InputText class="form-control" @bind-Value="@cliente.Telefonos" />
+                <ValidationMessage For="@(() => cliente.Telefonos)" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label>Email 01:</label>
+            <div>
+                <InputText class="form-control" @bind-Value="@cliente.Email01" />
+                <ValidationMessage For="@(() => cliente.Email01)" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label>Email 02:</label>
+            <div>
+                <InputText class="form-control" @bind-Value="@cliente.Email02" />
+                <ValidationMessage For="@(() => cliente.Email02)" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label>Email 03:</label>
+            <div>
+                <InputText class="form-control" @bind-Value="@cliente.Email03" />
+                <ValidationMessage For="@(() => cliente.Email03)" />
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>Estado:</label>
+            <div>
+                <InputSelect class="form-control"
+                             @bind-Value="cliente.IdEstado">
+                    <option value="0">--Seleccione Estado--</option>
+                    @if (Estados != null)
+                        {
+                        @foreach (var item in Estados)
+                            {
+                            @if (item.IdEstado == cliente.IdEstado)
+                                {
+                                <option selected value="@item.IdEstado">@item.NombreEstado</option>
+                                }
+                                else
+                                {
+                                <option value="@item.IdEstado">@item.NombreEstado</option>
+                                }
+                            }
+                        }
+                </InputSelect>
+            </div>
+        </div>
+        <button class="btn btn-success" type="submit">Guardar Cambios</button>
+    </EditForm>
+}
+
+@code {
+    ClientesEditModel cliente = new ClientesEditModel();
+    public string dptoID = "00";
+    public string provID = "0000";
+    public string distID = "000000";
+
+    //IEnumerable<CiudadModel> ciudadModels;
+    List<DptoModel> Dptos = new List<DptoModel>();
+    List<ProvModel> Provs = new List<ProvModel>();
+    List<DistModel> Dists = new List<DistModel>();
+    List<EstadoModel> Estados = new List<EstadoModel>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        //ciudadModels = await clientesAddService.ReadCiudades();
+        Dptos = await clientesAddService.ReadDptos();
+        Estados = await clientesAddService.ReadEstados();
+    }
+
+    public async Task ValorDptoCambiado(string _idDpto)
+    {
+        cliente.IdDep = _idDpto;
+        dptoID = _idDpto;
+        Console.WriteLine("Provincias de  :  " + dptoID);
+        await InvokeAsync(StateHasChanged);
+        if (_idDpto == "00")
+        {
+            Provs.Clear();
+        }
+        else
+        {
+            await LoadProvincias(dptoID);
+        }
+    }
+
+    protected async Task LoadProvincias(String _id)
+    {
+        Provs = await clientesAddService.ReadProvs(_id);
+    }
+
+    public async Task ValorProvCambiado(String _idProv)
+    {
+        cliente.IdProv = _idProv;
+        Console.WriteLine("Provincias de  :  " + _idProv);
+        await InvokeAsync(StateHasChanged);
+        if (_idProv == "0000")
+        {
+            Dists.Clear();
+        }
+        else
+        {
+            await LoadDistritos(_idProv);
+        }
+    }
+
+    private async Task LoadDistritos(String _id_Dist)
+    {
+        Dists = await clientesAddService.ReadDists(_id_Dist);
+    }
+
+
+    async Task CrearClientes()
+    {
+        bool Saved = false;
+        try
+        {
+            cliente.IdDistribuidor = AppData.Id;
+            Saved = await clientesAddService.EditClientes(0, cliente);
+            if (Saved)
+            {
+                NavigationManager.NavigateTo("/clientes");
+            }
+            else
+            {
+                Console.WriteLine("No se ha grabado los datos");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
+        finally
+        {
+            Console.WriteLine("Ejecutando");
+        }
+    }
+}

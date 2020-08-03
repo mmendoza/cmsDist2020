@@ -1,0 +1,76 @@
+﻿@page "/login"
+@using cmsDist2020.Models
+@inject cmsDist2020.Service.LoginService loginService
+@inject NavigationManager NavigationManager
+@inject cmsDist2020.Data.AppData AppData
+
+<link href="/css/style_login.css" rel="stylesheet" type="text/css" />
+<EditForm Model="accessLogin" OnSubmit="OnSubmit">
+    <div class="modal-dialog text-center">
+        <div class="col-sm-8 main-section">
+            <div class="modal-content">
+                <div class="col-12 user-img">
+                    <img src="img/person.png">
+                </div>
+                <div class="col-12 user-name">
+                    <h1>Datos de Acceso</h1>
+                </div>
+                <div class="col-12 form-input">
+                    <div class="form-group">
+                        <InputText class="form-control" @bind-Value="accessLogin.UserName" placeholder="Nombre de usuario"></InputText>
+                    </div>
+                    <div class="form-group">
+                        <InputText type="password" class="form-control" @bind-Value="accessLogin.PassName" placeholder="Password"></InputText>
+                    </div>
+                    <button type="submit" class="btn btn-success">Login</button>
+                </div>
+                <div class="col-12 link-part">
+                    <a href="#">Forgot Password?</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</EditForm>
+
+
+@code {
+    AccessLogin accessLogin = new AccessLogin();
+
+    LoginModel login_model = new LoginModel();
+    string _error_ = "";
+
+    private async void OnSubmit()
+    {
+        try
+        {
+            login_model = await loginService.Login_Access(accessLogin.UserName, accessLogin.PassName);
+            if (login_model != null)
+            {
+                if (login_model.Id != 0)
+                {
+                    AppData.Id = login_model.Id;
+                    AppData.Email = login_model.Email;
+                    AppData.Nombre = login_model.Nombre;
+                    AppData.Direccion = login_model.Direccion;
+                    NavigationManager.NavigateTo("/productos");
+                }
+                else
+                {
+                    NavigationManager.NavigateTo("/error");
+                }
+            }
+            else
+            {
+                NavigationManager.NavigateTo("/error");
+            }
+        }
+        catch (Exception ex)
+        {
+            _error_ = ex.Message;
+        }
+        finally
+        {
+            Console.WriteLine("Ejecutando");
+        }
+    }
+}

@@ -1,0 +1,85 @@
+﻿@page "/colaboradores/edit/{ColaboradorId:int}"
+@using cmsDist2020.Models;
+@inject cmsDist2020.Data.AppData AppData
+@inject NavigationManager navigationManager
+@inject cmsDist2020.Service.ClientesAddService clienteService
+
+<h3>Edición de Colaboradores</h3>
+@if (colaboradorModels == null)
+{
+    <img src="./Img/cargando.gif" />
+}
+else
+{
+    <EditForm Model="colaboradorModels" OnValidSubmit="CrearColaboradores">
+        <DataAnnotationsValidator />
+        <div class="form-group">
+            <label>Nombre(s) y Apellidos:</label>
+            <div>
+                <InputText class="form-control" @bind-Value="@colaboradorModels.Nombre" />
+                <ValidationMessage For="@(() => colaboradorModels.Nombre)" placeholder="Nombres y apellidos" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label>Dirección:</label>
+            <div>
+                <InputText class="form-control" @bind-Value="@colaboradorModels.Direccion" />
+                <ValidationMessage For="@(() => colaboradorModels.Direccion)" placeholder="Dirección" />
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-6">
+                <label for="inputCity">Correo electrónico:</label>
+                <InputText type="email" class="form-control" @bind-Value="@colaboradorModels.Correo" />
+                <ValidationMessage For="@(() => colaboradorModels.Correo)" placeholder="Correo electrónico" />
+            </div>
+            <div class="form-group col-md-4">
+                <label for="inputState">Teléfono(s):</label>
+                <InputText class="form-control" @bind-Value="@colaboradorModels.Telefono" />
+                <ValidationMessage For="@(() => colaboradorModels.Telefono)" placeholder="Teleéfono(s)" />
+            </div>
+        </div>
+        <button class="btn btn-success" type="submit">Guardar Cambios</button>
+    </EditForm>
+}
+@code {
+    [Parameter]
+    public int ColaboradorId { get; set; }
+
+    ColaboradorModel colaboradorModels = new ColaboradorModel();
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (ColaboradorId != 0)
+        {
+            colaboradorModels = await clienteService.GetColaboradorId(ColaboradorId);
+
+        }
+    }
+
+    async Task CrearColaboradores()
+    {
+        bool Saved = false;
+        try
+        {
+            colaboradorModels.IdDistribuidor = AppData.Id;
+            Saved = await clienteService.SaveColaboradores(ColaboradorId, colaboradorModels);
+            if (Saved)
+            {
+                navigationManager.NavigateTo("/colaboradores");
+            }
+            else
+            {
+                Console.WriteLine("No se ha grabado los datos");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
+        finally
+        {
+            Console.WriteLine("Ejecutando");
+        }
+    }
+}

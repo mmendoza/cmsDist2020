@@ -1,0 +1,71 @@
+﻿@page "/colaboradores"
+@inject cmsDist2020.Data.AppData AppData
+@using cmsDist2020.Models
+@inject cmsDist2020.Service.ClientesService clientesService
+@inject NavigationManager NavigationManager
+
+<h3>Colaboradores</h3>
+
+@if (AppData.Id == 0)
+{
+    NavigationManager.NavigateTo("/error");
+}
+else
+{
+    @if (colaboradores == null)
+    {
+        <img src="./Img/cargando.gif" />
+    }
+    else
+    {
+        <div class="form-group">
+            <a class="btn btn-info" href="colaboradores/crear">Crear Colaborador</a>
+        </div>
+        <table class='table'>
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Nombres</th>
+                    <th>Dirección</th>
+                    <th>Email</th>
+                    <th>Teléfonos</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var colaboraderes in colaboradores)
+                {
+                    <tr>
+                        <th>@colaboraderes.Id</th>
+                        <th>@colaboraderes.Nombre</th>
+                        <th>@colaboraderes.Direccion</th>
+                        <th>@colaboraderes.Correo</th>
+                        <th>@colaboraderes.Telefono</th>
+                        <td>
+                            <a href="/colaboradores/edit/@colaboraderes.Id">Editar</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+}
+@code {
+    IEnumerable<ColaboradorModel> colaboradores;
+    string _error_ = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            colaboradores = await clientesService.GetColaboradores(AppData.Id);
+        }
+        catch (Exception ex)
+        {
+            _error_ = ex.Message;
+        }
+        finally
+        {
+            Console.WriteLine("Ejecutando");
+        }
+    }
+}

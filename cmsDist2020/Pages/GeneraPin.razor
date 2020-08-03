@@ -1,0 +1,215 @@
+﻿@page "/generaPin/{ProductoId:int}/{Id:int}/{Tipo:int}"
+@inject cmsDist2020.Data.AppData AppData
+@using cmsDist2020.Models
+@inject cmsDist2020.Service.ClientesService clientesService
+@inject NavigationManager navigationManager
+@using cmsDist2020.Helpers;
+@inject IJSRuntime JS;
+
+<h3>GeneraPin</h3>
+@if (productosModels == null)
+{
+    <img src="./Img/cargando.gif" />
+}
+else
+{
+    <EditForm Model="productosModels" OnSubmit="CrearNumeroPIN">
+        <div class="form-group">
+            <label>Nombre del Cliente:</label>
+            <div>
+                <InputText class="form-control" disabled="True" @bind-Value="@productosModels.Cliente" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label>Correo del Cliente:</label>
+            <div>
+                <InputText class="form-control" disabled="True" @bind-Value="@productosModels.Correo01" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label>Producto:</label>
+            <div>
+                <InputText class="form-control" disabled="True" @bind-Value="@productosModels.Producto" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label>Nombre del Colaborador:</label>
+            <div>
+                <InputText class="form-control" disabled="True" @bind-Value="@productosModels.Colaborador" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label>N° de Contrato:</label>
+            <div>
+                <InputText class="form-control" disabled="True" @bind-Value="@productosModels.NroContrato" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label>N° PIN:</label>
+            <div>
+                <InputText class="form-control" disabled="True" @bind-Value="@productosModels.NroPin" />
+            </div>
+        </div>
+        <button class="btn btn-success" type="submit">Generar N° PIN</button>
+        <button class="btn btn-secondary" type="submit">Generar N° PIN</button>
+    </EditForm>
+}
+
+@code {
+    [Parameter] public int ProductoId { get; set; }
+    [Parameter] public int Id { get; set; }
+    [Parameter] public int Tipo { get; set; }
+
+    ProductosModel productosModels = new ProductosModel();
+    string _error_ = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            productosModels = await clientesService.GetProductoId(ProductoId, AppData.Id, Id);
+        }
+        catch (Exception ex)
+        {
+            _error_ = ex.Message;
+        }
+        finally
+        {
+            Console.WriteLine("Ejecutando");
+        }
+    }
+
+    private async void MuestraMensaje()
+    {
+        try
+        {
+            await JS.MostrarMensaje("Nro Pin fue enviado correctatmente al cliente");
+        }
+        catch (Exception ex)
+        {
+            _error_ = ex.Message;
+        }
+        finally
+        {
+            Console.WriteLine("Ejecutando");
+        }
+    }
+
+    void CrearNumeroPIN()
+    {
+        string GENERA_PIN = "";
+        DateTime FECHA_FINAL = System.DateTime.Now;
+        string TipoUsuario = "";
+        string PassTipoUsuario = "";
+        string TipoUsuarioWeb = "";
+        string PassTipoUsuarioWeb = "";
+        string TipoUsuarioApp = "";
+        string PassTipoUsuarioApp = "";
+        string usrInfocontable = "";
+        string passInfocontable = "";
+        string usrebookweb = "";
+        string passebookweb = "";
+        string idProductos = "";
+        string DETALLE_FAMILIA = "";
+        bool Saved = false;
+        try
+        {
+
+            System.Data.DataTable dt_ = new System.Data.DataTable();
+            dt_ = clientesService.paLeeTipoProducto(ProductoId).Tables[0];
+            if (dt_.Rows.Count > 0)
+            {
+                GENERA_PIN = dt_.Rows[0]["GENERA_PIN"].ToString();
+                FECHA_FINAL = Convert.ToDateTime(dt_.Rows[0]["FECHA_FINAL"].ToString());
+                TipoUsuario = dt_.Rows[0]["TipoUsuario"].ToString();
+                PassTipoUsuario = dt_.Rows[0]["PassTipoUsuario"].ToString();
+                TipoUsuarioWeb = dt_.Rows[0]["TipoUsuarioWeb"].ToString();
+                PassTipoUsuarioWeb = dt_.Rows[0]["PassTipoUsuarioWeb"].ToString();
+                TipoUsuarioApp = dt_.Rows[0]["TipoUsuarioApp"].ToString();
+                PassTipoUsuarioApp = dt_.Rows[0]["PassTipoUsuarioApp"].ToString();
+                usrInfocontable = dt_.Rows[0]["usrInfocontable"].ToString();
+                passInfocontable = dt_.Rows[0]["passInfocontable"].ToString();
+                usrebookweb = dt_.Rows[0]["usrebookweb"].ToString();
+                passebookweb = dt_.Rows[0]["passebookweb"].ToString();
+                idProductos = dt_.Rows[0]["idProductos"].ToString();
+                DETALLE_FAMILIA = dt_.Rows[0]["DETALLE_FAMILIA"].ToString();
+                String _NRO_PIN = clientesService._Numero_pin(TipoUsuario);
+
+                string _ok_ = clientesService.pa_creacion_pines(TipoUsuario, PassTipoUsuario, TipoUsuarioWeb, PassTipoUsuarioWeb,
+                TipoUsuarioApp, PassTipoUsuarioApp, usrInfocontable, passInfocontable, usrebookweb, passebookweb, _NRO_PIN, DETALLE_FAMILIA,
+                FECHA_FINAL, Convert.ToDouble(idProductos), productosModels.NroContrato, ProductoId, Id);
+                if (_ok_ == "OK")
+                {
+                    string _ok_email_ = SendMail(productosModels.Correo01, _NRO_PIN, DETALLE_FAMILIA, productosModels.Cliente);
+                    if (_ok_email_ == "Email Enviado")
+                    {
+                        MuestraMensaje();
+                        //JS.MostrarMensaje("Nro Pin fue enviado correctatmente al cliente");
+                        navigationManager.NavigateTo("/contratos/" + ProductoId.ToString());
+                    }
+                }
+                else
+                {
+                    Console.WriteLine(_ok_);
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
+        finally
+        {
+            Console.WriteLine("Ejecutando");
+        }
+    }
+
+
+    private string SendMail(string _email, string _NRO_PIN, string Producto, string Cliente)
+    {
+        try
+        {
+            using (System.Net.Mail.MailMessage mail = new System.Net.Mail.MailMessage())
+            {
+                mail.From = new System.Net.Mail.MailAddress("activaciondelicencias@gacetajuridica.com.pe");
+                mail.To.Add(_email);
+                mail.To.Add("mmendoza@gacetajuridica.com.pe");
+                mail.Subject = "Gracias por su Compra";
+                mail.Body = "<html>  " +
+                            "<head><title> mensaje</title></head>" +
+                            "<body> " +
+                            "<h4> Bienvenido " + Cliente + "</h4>" +
+                            "<p> Muchas gracias por comprar los Códigos Digitales de Gaceta Jurídica. " +
+                            "Esta es la CLAVE para ingresar a la aplicación de los Códigos(guárdelo):</p> " +
+                            "<strong>" + _NRO_PIN + "</strong> " +
+                            "</p>Si el sistema operativo de su smartphone es Android, a continuación descargue nuestra aplicación de los Códigos en la tienda online de Play Store a través del siguiente enlace:</p> " +
+                            "<p><a href='https://play.google.com/store/apps/details?id=com.pe.codigosgaceta'>https://play.google.com/store/apps/details?id=com.pe.codigosgaceta</a></p> " +
+                "<p>Si su smartphone es un iPhone, descargue en la tienda App Store nuestra aplicación de los Códigos a través del siguiente enlace:</p> " +
+                "<p><a href='https://apps.apple.com/us/app/c%C3%B3digos-digitales-gaceta/id1511627065?l=es&ls=1'>https://apps.apple.com/us/app/c%C3%B3digos-digitales-gaceta/id1511627065?l=es&ls=1</a></p> " +
+                "<p>En breve, le estaremos remitiendo a su correo el comprobante de pago electrónico respectivo.</p> " +
+                "<p> " +
+                "Saludos cordiales,<br/>" +
+                "Gaceta Jurídica S.A.<br/>" +
+                "<img src='http://www.gacetajuridica.com.pe/imgs/logo-grupo.gif'/><br/>" +
+                "Soporte técnico:  soportetecnico@gacetajuridica.com.pe<br/> " +
+                "Celular Whatsapp:  997576053 " +
+                "<p> " +
+                "</body> " +
+                "</html>";
+                mail.IsBodyHtml = true;
+
+                using (System.Net.Mail.SmtpClient smtp = new System.Net.Mail.SmtpClient("192.168.0.2", 25))
+                {
+                    smtp.Credentials = new System.Net.NetworkCredential("activaciondelicencias@gacetajuridica.com.pe", "A#gT5g65$A3Fd");
+                    //smtp.EnableSsl = true;
+                    smtp.Send(mail);
+                }
+            }
+            return "Email Enviado";
+        }
+        catch (Exception ex)
+        {
+            return ex.Message;
+        }
+    }
+}

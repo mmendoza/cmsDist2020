@@ -1,0 +1,69 @@
+﻿@page "/colaboradores/crear"
+@using cmsDist2020.Models;
+@inject cmsDist2020.Data.AppData AppData
+@inject NavigationManager navigationManager
+@inject cmsDist2020.Service.ClientesAddService clientesAddService
+
+<h3>Creación de de Colaboradores</h3>
+
+<EditForm Model="colaboradores" OnValidSubmit="CrearColaboradores">
+    <DataAnnotationsValidator />
+
+    <div class="form-group">
+        <label>Nombre(s) y Apellidos:</label>
+        <div>
+            <InputText class="form-control" @bind-Value="@colaboradores.Nombre" />
+            <ValidationMessage For="@(() => colaboradores.Nombre)" placeholder="Nombres y apellidos" />
+        </div>
+    </div>
+    <div class="form-group">
+        <label>Dirección:</label>
+        <div>
+            <InputText class="form-control" @bind-Value="@colaboradores.Direccion" />
+            <ValidationMessage For="@(() => colaboradores.Direccion)" placeholder="Dirección" />
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="form-group col-md-6">
+            <label for="inputCity">Correo electrónico:</label>
+            <InputText type="email" class="form-control" @bind-Value="@colaboradores.Correo" />
+            <ValidationMessage For="@(() => colaboradores.Correo)" placeholder="Correo electrónico" />
+        </div>
+        <div class="form-group col-md-4">
+            <label for="inputState">Teléfono(s):</label>
+            <InputText class="form-control" @bind-Value="@colaboradores.Telefono" />
+            <ValidationMessage For="@(() => colaboradores.Telefono)" placeholder="Teleéfono(s)" />
+        </div>
+    </div>
+    <button class="btn btn-success" type="submit">Guardar Cambios</button>
+</EditForm>
+
+@code {
+    ColaboradorModel colaboradores = new ColaboradorModel();
+
+    async Task CrearColaboradores()
+    {
+        bool Saved = false;
+        try
+        {
+            colaboradores.IdDistribuidor = AppData.Id;
+            Saved = await clientesAddService.SaveColaboradores(0, colaboradores);
+            if (Saved)
+            {
+                navigationManager.NavigateTo("/colaboradores");
+            }
+            else
+            {
+                Console.WriteLine("No se ha grabado los datos");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
+        finally
+        {
+            Console.WriteLine("Ejecutando");
+        }
+    }
+}

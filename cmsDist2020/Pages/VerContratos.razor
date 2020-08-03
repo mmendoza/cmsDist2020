@@ -1,0 +1,127 @@
+﻿@page "/vercontratos/{IdProducto:int}/{Id:int}"
+@using cmsDist2020.Models
+@inject cmsDist2020.Data.AppData AppData
+@inject cmsDist2020.Service.ClientesAddService clientesAddService
+@inject NavigationManager navigationManager
+
+<h3>Ver Contratos</h3>
+@if (clienteSelectModel == null)
+{
+    <img src="./Img/cargando.gif" />
+}
+else
+{
+    <EditForm Model="contratoModel" OnValidSubmit="CrearContratos">
+        <DataAnnotationsValidator />
+        <div class="form-group">
+            <label>Cliente:</label>
+            <InputSelect class="form-control"
+                         @bind-Value="@contratoModel.IdCliente">
+                <option value="">--Seleccione un Cliente--</option>
+                @foreach (var item in clienteSelectModel)
+                    {
+                    @if (item.IdClienteselect == contratoModel.IdCliente)
+                        {
+                        <option selected value="@item.IdClienteselect">@item.NombreCliente</option>
+                        }
+                        else
+                        {
+                        <option value="@item.IdClienteselect">@item.NombreCliente</option>
+                        }
+                    }
+            </InputSelect>
+        </div>
+        <div class="form-group">
+            <label>Colaborador:</label>
+            <InputSelect class="form-control" @bind-Value="@contratoModel.IdColaborador">
+                <option value="">--Seleccione un Colaborador--</option>
+                @foreach (var item in colaboradorSelectModel)
+                    {
+                    @if (item.IdColaboradorSelect == contratoModel.IdColaborador)
+                        {
+                        <option selected value="@item.IdColaboradorSelect">@item.NombreColaborador</option>
+                        }
+                        else
+                        {
+                        <option value="@item.IdColaboradorSelect">@item.NombreColaborador</option>
+                        }
+                    }
+            </InputSelect>
+        </div>
+
+        <div class="form-group">
+            <label>N° Contrato:</label>
+            <div>
+                <InputText class="form-control" @bind-Value="@contratoModel.NroContrato" />
+                <ValidationMessage For="@(() => contratoModel.NroContrato)" />
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>N° Cuotas:</label>
+            <div>
+                <InputNumber class="form-control" @bind-Value="@contratoModel.NroCuotas" />
+                <ValidationMessage For="@(() => contratoModel.NroCuotas)" />
+            </div>
+        </div>
+
+        <button class="btn btn-success" type="submit">Guardar Contrato</button>
+    </EditForm>
+}
+@code {
+    [Parameter]
+    public int IdProducto { get; set; }
+    [Parameter]
+    public int Id { get; set; }
+
+    ContratoModel contratoModel = new ContratoModel();
+
+    public List<ClienteSelectModel> clienteSelectModel;
+    public List<ColaboradorSelectModel> colaboradorSelectModel;
+
+    protected override async Task OnInitializedAsync()
+    {
+        clienteSelectModel = await clientesAddService.ReadClientes(AppData.Id);
+        colaboradorSelectModel = await clientesAddService.ReadColaboradores(AppData.Id);
+        if (Id != 0)
+        {
+            contratoModel = await clientesAddService.GetContratoId(Id);
+        }
+        else
+        {
+            contratoModel.Id = 0;
+        }
+    }
+
+
+    async Task CrearContratos()
+    {
+        bool Saved = false;
+        try
+        {
+            if (Id == 0)
+            {
+                //contratoModel.IdEstadoContrato = "1";
+                contratoModel.IdDistribuidor = AppData.Id;
+                contratoModel.IdProducto = IdProducto;
+            }
+            Saved = await clientesAddService.SaveContratos(Id, contratoModel);
+            if (Saved)
+            {
+                navigationManager.NavigateTo("/contratos/" + IdProducto.ToString());
+            }
+            else
+            {
+                Console.WriteLine("No se ha grabado los datos");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
+        finally
+        {
+            Console.WriteLine("Ejecutando");
+        }
+    }
+}
