@@ -13,17 +13,13 @@
 else
 {
     <div class="form-group">
-        <MatButton Raised="true" OnClick="@CreaNuevo" Disabled="true">Registrar Nuevo</MatButton>
-        @*<a class="btn btn-info" href="vercontratos/@ProductoId/0">Crear Nuevo Contrato</a>*@
+        <MatButton Raised="true" OnClick="@CreaNuevo" Disabled="false">Registrar Nuevo</MatButton>
     </div>
-
-
     <MatTable Items="@productosModels" ShowFooter="false" ShowPaging="false" PageSize=10>
         <MatTableHeader>
             <th>Acciones PIN</th>
             <th>Modificar</th>
             <th>Producto</th>
-            @*<th>Id</th>*@
             <th>Cliente</th>
             <th>Direccion</th>
             <th>Telefono</th>
@@ -39,56 +35,62 @@ else
                 @if (@context.NroPin == "")
                     {
                     <MatIconButton Disabled="false" Raised="true" OnClick="@(() => Crear(@context.Id))">
-                        <MatIcon>@MatIconNames.Create</MatIcon>
-                    </MatIconButton>
-                    <MatIconButton Disabled="true" Raised="true" OnClick="@(() => Habilitar(@context.Id))">
-                        <MatIcon>@MatIconNames.Restore</MatIcon>
-                    </MatIconButton>
-                    <MatIconButton Disabled="true" Raised="true" OnClick="@(() => Deshabilitar(@context.Id))">
-                        <MatIcon>@MatIconNames.Delete_forever</MatIcon>
+                        <MatIcon>@MatIconNames.Fiber_pin</MatIcon>
                     </MatIconButton>
                     }
                     else
                     {
-                    <MatIconButton Disabled="true" Raised="true" OnClick="@(() => Crear(@context.Id))">
-                        <MatIcon>@MatIconNames.Create</MatIcon>
-                    </MatIconButton>
-                    <MatIconButton Disabled="false" Raised="true" OnClick="@(() => Habilitar(@context.Id))">
-                        <MatIcon>@MatIconNames.Restore</MatIcon>
-                    </MatIconButton>
-                    <MatIconButton Disabled="false" Raised="true" OnClick="@(() => Deshabilitar(@context.Id))">
-                        <MatIcon>@MatIconNames.Delete_forever</MatIcon>
-                    </MatIconButton>
+                    @if (@context.EstadoPin == "0")
+                        {
+                        <MatIconButton Disabled="false" Raised="true" OnClick="@(() => Crear(@context.Id))">
+                            <MatIcon>@MatIconNames.Warning</MatIcon>
+                        </MatIconButton>
+                        }
+                        else
+                        {
+                        <MatIconButton Disabled="false" Raised="true" OnClick="@(() => Crear(@context.Id))">
+                            <MatIcon>@MatIconNames.Edit</MatIcon>
+                        </MatIconButton>
+                        }
                     }
             </td>
-                <td>
-                    <a class="btn btn-primary" href="/vercontratos/@ProductoId/@context.Id">
-                        <i class="icon-comment"></i> Editar
-                    </a>
-                </td>
-                <td>@context.Producto</td>
-                <td>@context.Cliente</td>
-                <td>@context.Direccion</td>
-                <td>@context.Telefono</td>
-                <td>@context.Correo01</td>
-                <td>@context.Correo02</td>
-                <td>@context.Correo03</td>
-                <td>@context.Colaborador</td>
-                <td>@context.NroContrato</td>
-                <td>@context.NroCuotas</td>
-            </MatTableRow>
+            <td>
+                <a class="btn btn-primary" href="/vercontratos/@ProductoId/@context.Id">
+                    <i class="icon-comment"></i> Editar
+                </a>
+            </td>
+            <td>@context.Producto</td>
+            <td>@context.Cliente</td>
+            <td>@context.Direccion</td>
+            <td>@context.Telefono</td>
+            <td>@context.Correo01</td>
+            <td>@context.Correo02</td>
+            <td>@context.Correo03</td>
+            <td>@context.Colaborador</td>
+            <td>@context.NroContrato</td>
+            <td>@context.NroCuotas</td>
+        </MatTableRow>
     </MatTable>
+    <MatDialog @bind-IsOpen="@dialogIsOpen">
+        <MatDialogTitle>@name</MatDialogTitle>
+        <MatDialogActions>
+            <MatButton OnClick="@(e => { dialogIsOpen = false; })"> OK </MatButton>
+        </MatDialogActions>
+    </MatDialog>
+
 }
 @code {
     [Parameter]
     public int ProductoId { get; set; }
-//
-//  Fuentes de los iconos de los botones
-//
-//    https://material.io/resources/icons/?style=baseline
-//
+    //
+    //  Fuentes de los iconos de los botones
+    //
+    //    https://material.io/resources/icons/?style=baseline
+    //
     public List<ProductosModel> productosModels = new List<ProductosModel>();
     string _error_ = "";
+    bool dialogIsOpen = false;
+    string name = null;
 
     protected override async Task OnInitializedAsync()
     {
@@ -99,6 +101,9 @@ else
         catch (Exception ex)
         {
             _error_ = ex.Message;
+            name = ex.Message;
+            dialogIsOpen = true;
+
         }
         finally
         {
@@ -111,17 +116,10 @@ else
         navigationManager.NavigateTo("vercontratos/" + ProductoId.ToString() + "/0");
     }
 
-    private void Crear(int idProduct)
+    private void Crear(int idContrato)
     {
-        navigationManager.NavigateTo("contratos/" + ProductoId.ToString() + "/0");
-    }
-
-    private void Habilitar(int idProduct)
-    {
-        //navigationManager.NavigateTo("contratos/" + idProdcuct.ToString());
-    }
-    private void Deshabilitar(int idProduct)
-    {
-        //navigationManager.NavigateTo("contratos/" + idProdcuct.ToString());
+        AppData.ContratoId = Convert.ToDouble(idContrato);
+        AppData.ProductoId = Convert.ToDouble(ProductoId);
+        navigationManager.NavigateTo("generaPin");
     }
 }

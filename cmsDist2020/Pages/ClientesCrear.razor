@@ -12,164 +12,198 @@
 }
 else
 {
-    <EditForm Model="cliente" OnValidSubmit="CrearClientes">
-        <DataAnnotationsValidator />
-
-        <div class="form-group">
-            <label>Ruc / Dni:</label>
-            <div>
-                <InputText class="form-control" @bind-Value="@cliente.RucDni" />
-                <ValidationMessage For="@(() => cliente.RucDni)" />
+<EditForm Model="cliente" OnValidSubmit="CrearClientes">
+    <DataAnnotationsValidator />
+    <div class="form-row">
+        <div class="form-group col-md-2">
+            <div class="form-group">
+                <label>Ruc / Dni</label>
+                <div>
+                    <InputText class="form-control" @bind-Value="@cliente.RucDni" />
+                    <ValidationMessage For="@(() => cliente.RucDni)" />
+                </div>
             </div>
         </div>
-        <div class="form-group">
-            <label>Nombre(s):</label>
-            <div>
-                <InputText class="form-control" @bind-Value="@cliente.Nombre" />
-                <ValidationMessage For="@(() => cliente.Nombre)" />
+        <div class="form-group col-md-8">
+            <div class="form-group">
+                <label>Nombre(s) o Razon Social</label>
+                <div>
+                    <InputText class="form-control" @bind-Value="@cliente.Nombre" />
+                    <ValidationMessage For="@(() => cliente.Nombre)" />
+                </div>
             </div>
         </div>
-        <div class="form-group">
-            <label>Apellido Paterno:</label>
-            <div>
-                <InputText class="form-control" @bind-Value="@cliente.ApePat" />
-                <ValidationMessage For="@(() => cliente.ApePat)" />
+    </div>
+    <div class="form-row">
+        <div class="form-group col-md-5">
+            <div class="form-group">
+                <label>Apellido Paterno</label>
+                <div>
+                    <InputText class="form-control" @bind-Value="@cliente.ApePat" />
+                    <ValidationMessage For="@(() => cliente.ApePat)" />
+                </div>
             </div>
         </div>
-        <div class="form-group">
-            <label>Apellido Materno:</label>
-            <div>
-                <InputText class="form-control" @bind-Value="@cliente.Apemat" />
-                <ValidationMessage For="@(() => cliente.Apemat)" />
+        <div class="form-group col-md-5">
+            <div class="form-group">
+                <label>Apellido Materno</label>
+                <div>
+                    <InputText class="form-control" @bind-Value="@cliente.Apemat" />
+                    <ValidationMessage For="@(() => cliente.Apemat)" />
+                </div>
             </div>
         </div>
-        <div class="form-group">
-            <label>Direccion:</label>
+    </div>
+    <div class="form-group">
+        <div class="form-group col-md-10">
+            <label>Direccion</label>
             <div>
                 <InputText class="form-control" @bind-Value="@cliente.Direccion" />
                 <ValidationMessage For="@(() => cliente.Direccion)" />
             </div>
         </div>
-
-        <div class="form-group">
-            <label>Departamento:</label>
-            <InputSelect Class="form-control"
-                         ValueExpression="@(()=>cliente.IdDep)"
-                         ValueChanged="@((string value) => ValorDptoCambiado(value))"
-                         Value="@cliente.IdDep">
-                <option value="">-- Select Departamentos--</option>
-                @foreach (var item in Dptos)
-                {
-                    @if (item.IdDpto == cliente.IdDep)
+    </div>
+    <div class="form-row">
+        <div class="form-group col-md-3">
+            <div class="form-group">
+                <label>Departamento</label>
+                <InputSelect Class="form-control"
+                             ValueExpression="@(()=>cliente.IdDep)"
+                             ValueChanged="@((string value) => ValorDptoCambiado(value))"
+                             Value="@cliente.IdDep">
+                    <option value="">-- Select Departamentos--</option>
+                    @foreach (var item in Dptos)
                     {
-                        <option selected value="@item.IdDpto">@item.NombDpto</option>
-                    }
-                    else
-                    {
-                        <option value="@item.IdDpto">@item.NombDpto</option>
-                    }
-                }
-            </InputSelect>
-        </div>
-        <div class="form-group">
-            <label>Provincia:</label>
-            <InputSelect Class="form-control"
-                         ValueExpression="@(()=>cliente.IdProv)"
-                         ValueChanged="@((string value) => ValorProvCambiado(value))"
-                         Value="@cliente.IdProv">
-                <option value="">-- Select Provincias--</option>
-                @if (Provs != null)
-                {
-                    @foreach (var item in Provs)
-                    {
-                        @if (item.IdProv == cliente.IdProv)
+                        @if (item.IdDpto == cliente.IdDep)
                         {
-                            <option selected value="@item.IdProv">@item.NombProv</option>
+                            <option selected value="@item.IdDpto">@item.NombDpto</option>
                         }
                         else
                         {
-                            <option value="@item.IdProv">@item.NombProv</option>
+                            <option value="@item.IdDpto">@item.NombDpto</option>
                         }
                     }
-                }
-            </InputSelect>
+                </InputSelect>
+            </div>
         </div>
-        <div class="form-group">
-            <label>Distrito:</label>
-            <InputSelect Class="form-control"
-                         @bind-Value="@cliente.IdDist">
-                <option value="">-- Select Distritos--</option>
-                @if (Dists != null)
+        <div class="form-group col-md-3">
+            <div class="form-group">
+                <label>Provincia</label>
+                <InputSelect Class="form-control"
+                             ValueExpression="@(()=>cliente.IdProv)"
+                             ValueChanged="@((string value) => ValorProvCambiado(value))"
+                             Value="@cliente.IdProv">
+                    <option value="">-- Select Provincias--</option>
+                    @if (Provs != null)
                     {
-                    @foreach (var item in Dists)
+                        @foreach (var item in Provs)
                         {
-                        @if (item.IdDist == cliente.IdDist)
+                            @if (item.IdProv == cliente.IdProv)
                             {
-                            <option selected value="@item.IdDist">@item.NombDist</option>
+                                <option selected value="@item.IdProv">@item.NombProv</option>
                             }
                             else
                             {
-                            <option value="@item.IdDist">@item.NombDist</option>
+                                <option value="@item.IdProv">@item.NombProv</option>
                             }
                         }
                     }
-            </InputSelect>
-        </div>
-
-        <div class="form-group">
-            <label>Telefonos:</label>
-            <div>
-                <InputText class="form-control" @bind-Value="@cliente.Telefonos" />
-                <ValidationMessage For="@(() => cliente.Telefonos)" />
+                </InputSelect>
             </div>
         </div>
-        <div class="form-group">
-            <label>Email 01:</label>
-            <div>
-                <InputText class="form-control" @bind-Value="@cliente.Email01" />
-                <ValidationMessage For="@(() => cliente.Email01)" />
-            </div>
-        </div>
-        <div class="form-group">
-            <label>Email 02:</label>
-            <div>
-                <InputText class="form-control" @bind-Value="@cliente.Email02" />
-                <ValidationMessage For="@(() => cliente.Email02)" />
-            </div>
-        </div>
-        <div class="form-group">
-            <label>Email 03:</label>
-            <div>
-                <InputText class="form-control" @bind-Value="@cliente.Email03" />
-                <ValidationMessage For="@(() => cliente.Email03)" />
-            </div>
-        </div>
-
-        <div class="form-group">
-            <label>Estado:</label>
-            <div>
-                <InputSelect class="form-control"
-                             @bind-Value="cliente.IdEstado">
-                    <option value="0">--Seleccione Estado--</option>
-                    @if (Estados != null)
+        <div class="form-group col-md-4">
+            <div class="form-group">
+                <label>Distrito</label>
+                <InputSelect Class="form-control"
+                             @bind-Value="@cliente.IdDist">
+                    <option value="">-- Select Distritos--</option>
+                    @if (Dists != null)
                         {
-                        @foreach (var item in Estados)
+                        @foreach (var item in Dists)
                             {
-                            @if (item.IdEstado == cliente.IdEstado)
+                            @if (item.IdDist == cliente.IdDist)
                                 {
-                                <option selected value="@item.IdEstado">@item.NombreEstado</option>
+                                <option selected value="@item.IdDist">@item.NombDist</option>
                                 }
                                 else
                                 {
-                                <option value="@item.IdEstado">@item.NombreEstado</option>
+                                <option value="@item.IdDist">@item.NombDist</option>
                                 }
                             }
                         }
                 </InputSelect>
             </div>
         </div>
-        <button class="btn btn-success" type="submit">Guardar Cambios</button>
-    </EditForm>
+    </div>
+    <div class="form-row">
+        <div class="form-group col-md-3">
+            <div class="form-group">
+                <label>Teléfonos</label>
+                <div>
+                    <InputText class="form-control" @bind-Value="@cliente.Telefonos" />
+                    <ValidationMessage For="@(() => cliente.Telefonos)" />
+                </div>
+            </div>
+        </div>
+        <div class="form-group col-md-7">
+            <div class="form-group">
+                <label>Email principal</label>
+                <div>
+                    <InputText class="form-control" @bind-Value="@cliente.Email01" />
+                    <ValidationMessage For="@(() => cliente.Email01)" />
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="form-group col-md-4">
+            <div class="form-group">
+                <label>Email alternativo 1</label>
+                <div>
+                    <InputText class="form-control" @bind-Value="@cliente.Email02" />
+                    <ValidationMessage For="@(() => cliente.Email02)" />
+                </div>
+            </div>
+        </div>
+        <div class="form-group col-md-4">
+            <div class="form-group">
+                <label>Email alternativo 2</label>
+                <div>
+                    <InputText class="form-control" @bind-Value="@cliente.Email03" />
+                    <ValidationMessage For="@(() => cliente.Email03)" />
+                </div>
+            </div>
+        </div>
+        <div class="form-group col-md-2">
+            <div class="form-group">
+                <label>Estado</label>
+                <div>
+                    <InputSelect class="form-control"
+                                 @bind-Value="cliente.IdEstado">
+                        <option value="0">--Seleccione Estado--</option>
+                        @if (Estados != null)
+                            {
+                            @foreach (var item in Estados)
+                                {
+                                @if (item.IdEstado == cliente.IdEstado)
+                                    {
+                                    <option selected value="@item.IdEstado">@item.NombreEstado</option>
+                                    }
+                                    else
+                                    {
+                                    <option value="@item.IdEstado">@item.NombreEstado</option>
+                                    }
+                                }
+                            }
+                    </InputSelect>
+                </div>
+            </div>
+        </div>
+    </div>
+    <MatButton Raised="true" type="submit" name="action">GUARDAR CAMBIOS</MatButton>
+    <MatButton Raised="true" OnClick="@retornar">CANCELAR</MatButton>
+    @*<button class="btn btn-success" type="submit">Guardar Cambios</button>*@
+</EditForm>
 }
 
 @code {
@@ -232,7 +266,6 @@ else
         Dists = await clientesAddService.ReadDists(_id_Dist);
     }
 
-
     async Task CrearClientes()
     {
         bool Saved = false;
@@ -258,4 +291,10 @@ else
             Console.WriteLine("Ejecutando");
         }
     }
+
+    private void retornar()
+    {
+        navigationManager.NavigateTo("clientes");
+    }
+
 }

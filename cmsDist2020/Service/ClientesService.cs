@@ -101,13 +101,13 @@ namespace cmsDist2020.Service
             return productosModels;
         }
 
-        public async Task<ProductosModel> GetProductoId(int IdProducto, int IdDistribuidor, int IdContrato)
+        public async Task<ProductosModel> GetProductoId(double IdProducto, int IdDistribuidor, double IdContrato)
         {
             ProductosModel productosModels = new ProductosModel();
             var parameters = new DynamicParameters();
             parameters.Add("id_distribuidor", IdDistribuidor, DbType.Int32);
-            parameters.Add("id_producto", IdProducto, DbType.Int32);
-            parameters.Add("IdContrato", IdContrato, DbType.Int32);
+            parameters.Add("id_producto", IdProducto, DbType.Double);
+            parameters.Add("IdContrato", IdContrato, DbType.Double);
             using (var conn = new SqlConnection(_configuration.Value))
             {
                 if (conn.State == ConnectionState.Closed)
@@ -146,7 +146,7 @@ namespace cmsDist2020.Service
         public String pa_creacion_pines(string TipoUsuario, string PassTipoUsuario, string TipoUsuarioWeb, string PassTipoUsuarioWeb,
   string TipoUsuarioApp, string PassTipoUsuarioApp, string usrInfocontable, string passInfocontable,
 string usrebookweb, string passebookweb, string nro_pin, string DET_SUSC, DateTime fechA_baja,
-double idProducto, string nro_contrato, double id_suscripcion, double idContrato)
+double idProducto, string nro_contrato, double id_suscripcion, double idContrato, double IdDistribuidor)
         {
             SqlConnection dataConnection = new SqlConnection(_configuration.Value);
             SqlCommand dataCommand = new SqlCommand("pa_creacion_pines", dataConnection);
@@ -168,6 +168,30 @@ double idProducto, string nro_contrato, double id_suscripcion, double idContrato
             dataCommand.Parameters.AddWithValue("@nro_contrato", nro_contrato);
             dataCommand.Parameters.AddWithValue("@id_suscripcion", id_suscripcion);
             dataCommand.Parameters.AddWithValue("@idContrato", idContrato);
+            dataCommand.Parameters.AddWithValue("@Id_Distribuidor", IdDistribuidor);
+            SqlParameter ParamError = new SqlParameter("@error", SqlDbType.VarChar, 200);
+            ParamError.Direction = ParameterDirection.Output;
+            dataCommand.Parameters.Add(ParamError);
+            dataConnection.Open();
+            dataCommand.ExecuteScalar();
+            dataConnection.Close();
+            string err = ParamError.Value.ToString();
+            return err;
+
+        }
+
+        public String pa_habilita_desabilita_pines(string TipoUsuario, string nro_pin, 
+            string nro_contrato, double id_suscripcion, double idContrato, string _hab_des)
+        {
+            SqlConnection dataConnection = new SqlConnection(_configuration.Value);
+            SqlCommand dataCommand = new SqlCommand("pa_habilita_desabilita_pines", dataConnection);
+            dataCommand.CommandType = CommandType.StoredProcedure;
+            dataCommand.Parameters.AddWithValue("@TipoUsuario", TipoUsuario);
+            dataCommand.Parameters.AddWithValue("@nro_pin", nro_pin);
+            dataCommand.Parameters.AddWithValue("@nro_contrato", nro_contrato);
+            dataCommand.Parameters.AddWithValue("@id_suscripcion", id_suscripcion);
+            dataCommand.Parameters.AddWithValue("@idContrato", idContrato);
+            dataCommand.Parameters.AddWithValue("@hab_des", _hab_des);
             SqlParameter ParamError = new SqlParameter("@error", SqlDbType.VarChar, 200);
             ParamError.Direction = ParameterDirection.Output;
             dataCommand.Parameters.Add(ParamError);

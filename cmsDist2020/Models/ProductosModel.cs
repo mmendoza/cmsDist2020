@@ -26,5 +26,6 @@ namespace cmsDist2020.Models
 		public DateTime FechaRegistro { get; set; }
 		public string IdColaborador { get; set; }
 		public int IdDistribuidor { get; set; }
+		public string MAC_ADDRESS { get; set; }
 	}
 }

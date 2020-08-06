@@ -5,41 +5,60 @@
 @inject NavigationManager navigationManager
 
 <h3>Lista de Productos</h3>
-<p>Bienvenido: @AppData.Nombre</p>
-@if (product_model == null)
+@if (@AppData.Id == 0)
 {
-    <img src="./Img/cargando.gif" />
+    <img src="./Img/LoginIn.gif" />
 }
 else
 {
-    <MatTable Items="@product_model" Class="align-self-stretch" Striped="true" ShowFooter="false" ShowPaging="true" PageSize=10>
-        <MatTableHeader>
-            <th>Acciones</th>
-            <th>Producto</th>
-            <th>Cantidad</th>
-            <th>Registrado</th>
-            <th>C Pin</th>
-            <th>C Pin Anulado</th>
-            @*<th>Acción</th>*@
-        </MatTableHeader>
-        <MatTableRow>
-            <td>
-                <MatButton Raised="true" OnClick="@(() => ListaContratos(@context.Cod))">Lista de Contratos</MatButton>
-                @*<a class="btn btn-primary" href='/contratos/@context.Cod'><i class="icon-comment"></i> Detalle de Contratos</a>*@
-            </td>
-            <td>@context.Producto</td>
-            <td>@context.Cantidad</td>
-            <td>@context.Registrado</td>
-            <td>@context.C_Pin</td>
-            <td>@context.C_Pin_Anulado</td>
-            @*<td>@context.Cod</td>*@
-        </MatTableRow>
-    </MatTable>
+    <p>Bienvenido: @AppData.Nombre</p>
+    @if (product_model == null)
+    {
+
+        <img src="./Img/cargando.gif" />
+    }
+    else
+    {
+        <MatTable Items="@product_model" Class="mat-body2" Striped="true" ShowFooter="false" ShowPaging="true" PageSize=10>
+            <MatTableHeader>
+                <th>Acciones</th>
+                <th>Producto</th>
+                <th>Cantidad</th>
+                <th>Registrado</th>
+                <th>C Pin</th>
+                <th>C Pin Anulado</th>
+                @*<th>Acción</th>*@
+            </MatTableHeader>
+            <MatTableRow>
+                <td>
+                    <MatButton Raised="true" OnClick="@(() => ListaContratos(@context.Cod))">Lista de Contratos</MatButton>
+                    @*<a class="btn btn-primary" href='/contratos/@context.Cod'><i class="icon-comment"></i> Detalle de Contratos</a>*@
+                </td>
+                <td>@context.Producto</td>
+                <td>@context.Cantidad</td>
+                <td>@context.Registrado</td>
+                <td>@context.C_Pin</td>
+                <td>@context.C_Pin_Anulado</td>
+                @*<td>@context.Cod</td>*@
+            </MatTableRow>
+        </MatTable>
+    }
+    <SurveyPrompt Title="Páginas Web: " />
+    <MatDialog @bind-IsOpen="@dialogIsOpen">
+        <MatDialogTitle>@name</MatDialogTitle>
+        <MatDialogActions>
+            <MatButton OnClick="@(e => { dialogIsOpen = false; })"> OK </MatButton>
+        </MatDialogActions>
+    </MatDialog>
+
 }
 
-@code {
+@code
+    {
     IEnumerable<ProductModel> product_model;
     string _error_ = "";
+    bool dialogIsOpen = false;
+    string name = null;
 
     protected override async Task OnInitializedAsync()
     {
@@ -50,6 +69,9 @@ else
         catch (Exception ex)
         {
             _error_ = ex.Message;
+            name = ex.Message;
+            dialogIsOpen = true;
+
         }
         finally
         {
@@ -59,6 +81,6 @@ else
 
     private void ListaContratos(int idProdcuct)
     {
-        navigationManager.NavigateTo("contratos/" + idProdcuct.ToString() );
+        navigationManager.NavigateTo("contratos/" + idProdcuct.ToString());
     }
 }

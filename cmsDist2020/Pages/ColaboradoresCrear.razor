@@ -10,17 +10,21 @@
     <DataAnnotationsValidator />
 
     <div class="form-group">
-        <label>Nombre(s) y Apellidos:</label>
-        <div>
-            <InputText class="form-control" @bind-Value="@colaboradores.Nombre" />
-            <ValidationMessage For="@(() => colaboradores.Nombre)" placeholder="Nombres y apellidos" />
+        <div class="form-group col-md-10">
+            <label>Nombre(s) y Apellidos:</label>
+            <div>
+                <InputText class="form-control" @bind-Value="@colaboradores.Nombre" />
+                <ValidationMessage For="@(() => colaboradores.Nombre)" placeholder="Nombres y apellidos" />
+            </div>
         </div>
     </div>
     <div class="form-group">
-        <label>Dirección:</label>
-        <div>
-            <InputText class="form-control" @bind-Value="@colaboradores.Direccion" />
-            <ValidationMessage For="@(() => colaboradores.Direccion)" placeholder="Dirección" />
+        <div class="form-group col-md-10">
+            <label>Dirección:</label>
+            <div>
+                <InputText class="form-control" @bind-Value="@colaboradores.Direccion" />
+                <ValidationMessage For="@(() => colaboradores.Direccion)" placeholder="Dirección" />
+            </div>
         </div>
     </div>
     <div class="form-row">
@@ -35,7 +39,9 @@
             <ValidationMessage For="@(() => colaboradores.Telefono)" placeholder="Teleéfono(s)" />
         </div>
     </div>
-    <button class="btn btn-success" type="submit">Guardar Cambios</button>
+    <MatButton Raised="true" type="submit" name="action">GUARDAR CAMBIOS</MatButton>
+    <MatButton Raised="true" OnClick="@retornar">CANCELAR</MatButton>
+    @*<button class="btn btn-success" type="submit">Guardar Cambios</button>*@
 </EditForm>
 
 @code {
@@ -65,5 +71,10 @@
         {
             Console.WriteLine("Ejecutando");
         }
+    }
+
+    private void retornar()
+    {
+        navigationManager.NavigateTo("colaboradores");
     }
 }

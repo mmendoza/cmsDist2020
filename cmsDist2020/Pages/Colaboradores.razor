@@ -4,17 +4,25 @@
 @inject cmsDist2020.Service.ClientesService clientesService
 @inject NavigationManager NavigationManager
 
-<h3>Colaboradores</h3>
-@if (colaborador == null)
+@if (@AppData.Id == 0)
 {
-    <img src="./Img/cargando.gif" />
+    <img src="./Img/LoginIn.gif" />
 }
 else
 {
-        <div class="form-group">
-            <a class="btn btn-info" href="colaboradores/crear">Crear Colaborador</a>
+    @if (colaborador == null)
+    {
+        <img src="./Img/cargando.gif" />
+    }
+    else
+    {
+        <div class="form-row">
+            <div class="form-group">
+                <a class="btn btn-info" href="colaboradores/crear">Crear Colaborador</a>
+                <label><strong> :: LISTA DE COLABORADORES ::</strong></label>
+            </div>
         </div>
-        <MatTable Items="@colaborador" Class="align-self-auto" Striped="true" ShowFooter="false" ShowPaging="true" PageSize=10>
+        <MatTable Items="@colaborador" Class="align-self-xl-auto" Striped="true" ShowFooter="false" ShowPaging="true" PageSize=10>
             <MatTableHeader>
                 <th>Acción</th>
                 <th>Nombre(s)</th>
@@ -33,11 +41,23 @@ else
                 <th>@context.Telefono</th>
             </MatTableRow>
         </MatTable>
+    }
+    <SurveyPrompt Title="Páginas Web: " />
+    <MatDialog @bind-IsOpen="@dialogIsOpen">
+        <MatDialogTitle>@name</MatDialogTitle>
+        <MatDialogActions>
+            <MatButton OnClick="@(e => { dialogIsOpen = false; })"> OK </MatButton>
+        </MatDialogActions>
+    </MatDialog>
+
 }
 
-@code {
+@code
+{
     IEnumerable<ColaboradorModel> colaborador;
     string _error_ = "";
+    bool dialogIsOpen = false;
+    string name = null;
 
     protected override async Task OnInitializedAsync()
     {
@@ -48,6 +68,9 @@ else
         catch (Exception ex)
         {
             _error_ = ex.Message;
+            name = ex.Message;
+            dialogIsOpen = true;
+
         }
         finally
         {

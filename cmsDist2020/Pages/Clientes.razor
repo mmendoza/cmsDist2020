@@ -2,62 +2,77 @@
 @inject cmsDist2020.Data.AppData AppData
 @using cmsDist2020.Models
 @inject cmsDist2020.Service.ClientesService clientesService
-@inject NavigationManager NavigationManager
-<h3>Clientes</h3>
-@if (clientes_model == null)
+@inject NavigationManager navigationManager
+
+@if (@AppData.Id == 0)
 {
-    <img src="./Img/cargando.gif" />
+    <img src="./Img/LoginIn.gif" />
 }
 else
 {
-    <div class="form-group">
-        <a class="btn btn-info" href="clientes/crear">Crear Cliente</a>
-    </div>
-    <MatTable Items="@clientes_model" Class="align-self-stretch" Striped="true" ShowFooter="false" ShowPaging="true" PageSize=10>
-        <MatTableHeader>
-            <th>Id</th>
-            <th>Ruc / Dni</th>
-            <th>Cliente</th>
-            @*<th>Apellido Paterno</th>
-            <th>Apellido Materno</th>*@
-            <th>Dirección</th>
-            @*<th>Id_Distrito</th>*@
-            <th>Distrito</th>
-            <th>Provincia</th>
-            <th>Departamento</th>
-            <th>Teléfonos</th>
-            <th>Email 1</th>
-            <th>Email 2</th>
-            <th>Email 3</th>
-            @*<th>IdEstado</th>*@
-            <th>Estado</th>
-        </MatTableHeader>
-        <MatTableRow>
-            <td>
-                <a class="btn btn-primary" href="/clientes/edit/@context.Id"><i class="icon-comment"></i> Editar</a>
-            </td>
-            @*<td>@context.Id</td>*@
-            <td>@context.RucDni</td>
-            <td>@context.Nombre @context.ApePat @context.Apemat</td>
-            @*<td>@context.ApePat</td>
-        <td>@context.Apemat</td>*@
-            <td>@context.Direccion</td>
-            @*<th>@context.Id_Distrito</th>*@
-            <th>@context.Dist</th>
-            <th>@context.Prov</th>
-            <th>@context.Dep</th>
-            <th>@context.Telefonos</th>
-            <th>@context.Email01</th>
-            <th>@context.Email02</th>
-            <th>@context.Email03</th>
-            @*<th>@clientes.IdEstado</th>*@
-            <th>@context.Estado</th>
-        </MatTableRow>
-    </MatTable>
+
+    @if (clientes_model == null)
+    {
+        <img src="./Img/cargando.gif" />
+    }
+    else
+    {
+        <div class="form-row">
+            <div class="form-group">
+                <a class="btn btn-info" href="clientes/crear">Crear Cliente</a>
+                <label><strong> :: LISTA DE CLIENTES ::</strong></label>
+            </div>
+        </div>
+        <MatTable Items="@clientes_model" PageLabel="Páginas" class="mat-caption" ShowFooter="true" ShowPaging="true" PageSize=10>
+            <MatTableHeader>
+                <th class="mat-caption">Acción</th>
+                <th class="mat-caption">Ruc / Dni</th>
+                <th class="mat-caption">Cliente</th>
+                <th class="mat-caption">Dirección</th>
+                <th class="mat-caption">Distrito</th>
+                <th class="mat-caption">Provincia</th>
+                <th class="mat-caption">Departamento</th>
+                <th class="mat-caption">Teléfonos</th>
+                <th class="mat-caption">Email 1</th>
+                <th class="mat-caption">Email 2</th>
+                <th class="mat-caption">Email 3</th>
+                <th class="mat-caption">Estado</th>
+            </MatTableHeader>
+            <MatTableRow>
+                <td>
+                    <MatIconButton Disabled="false" Raised="true" OnClick="@(() => Editar(@context.Id))">
+                        <MatIcon>@MatIconNames.Edit</MatIcon>
+                    </MatIconButton>
+                </td>
+                <td class="mat-caption">@context.RucDni</td>
+                <td class="mat-caption">@context.Nombre @context.ApePat @context.Apemat</td>
+                <td class="mat-caption">@context.Direccion</td>
+                <th class="mat-caption">@context.Dist</th>
+                <th class="mat-caption">@context.Prov</th>
+                <th class="mat-caption">@context.Dep</th>
+                <th class="mat-caption">@context.Telefonos</th>
+                <th class="mat-caption">@context.Email01</th>
+                <th class="mat-caption">@context.Email02</th>
+                <th class="mat-caption">@context.Email03</th>
+                <th class="mat-caption">@context.Estado</th>
+            </MatTableRow>
+        </MatTable>
+
+        <MatDialog @bind-IsOpen="@dialogIsOpen">
+            <MatDialogTitle>@name</MatDialogTitle>
+            <MatDialogActions>
+                <MatButton OnClick="@(e => { dialogIsOpen = false; })"> OK </MatButton>
+            </MatDialogActions>
+        </MatDialog>
+    }
+    <SurveyPrompt Title="Páginas Web: " />
 }
+
 @code {
     IEnumerable<ClientesModel> clientes_model;
     string _error_ = "";
+    bool dialogIsOpen = false;
+    string name = null;
 
     protected override async Task OnInitializedAsync()
     {
@@ -67,6 +82,8 @@ else
         }
         catch (Exception ex)
         {
+            name = ex.Message;
+            dialogIsOpen = true;
             _error_ = ex.Message;
         }
         finally
@@ -74,4 +91,11 @@ else
             Console.WriteLine("Ejecutando");
         }
     }
+
+    private void Editar(int idCliente)
+    {
+        //clientes/edit/@context.Id
+        navigationManager.NavigateTo("clientes/edit/" + idCliente.ToString());
+    }
+
 }

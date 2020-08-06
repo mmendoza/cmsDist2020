@@ -11,36 +11,42 @@
 }
 else
 {
-    <EditForm Model="colaboradorModels" OnValidSubmit="CrearColaboradores">
-        <DataAnnotationsValidator />
-        <div class="form-group">
+<EditForm Model="colaboradorModels" OnValidSubmit="CrearColaboradores">
+    <DataAnnotationsValidator />
+    <div class="form-group">
+        <div class="form-group col-md-10">
             <label>Nombre(s) y Apellidos:</label>
             <div>
                 <InputText class="form-control" @bind-Value="@colaboradorModels.Nombre" />
                 <ValidationMessage For="@(() => colaboradorModels.Nombre)" placeholder="Nombres y apellidos" />
             </div>
         </div>
-        <div class="form-group">
+    </div>
+    <div class="form-group">
+        <div class="form-group col-md-10">
             <label>Dirección:</label>
             <div>
                 <InputText class="form-control" @bind-Value="@colaboradorModels.Direccion" />
                 <ValidationMessage For="@(() => colaboradorModels.Direccion)" placeholder="Dirección" />
             </div>
         </div>
-        <div class="form-row">
-            <div class="form-group col-md-6">
-                <label for="inputCity">Correo electrónico:</label>
-                <InputText type="email" class="form-control" @bind-Value="@colaboradorModels.Correo" />
-                <ValidationMessage For="@(() => colaboradorModels.Correo)" placeholder="Correo electrónico" />
-            </div>
-            <div class="form-group col-md-4">
-                <label for="inputState">Teléfono(s):</label>
-                <InputText class="form-control" @bind-Value="@colaboradorModels.Telefono" />
-                <ValidationMessage For="@(() => colaboradorModels.Telefono)" placeholder="Teleéfono(s)" />
-            </div>
+    </div>
+    <div class="form-row">
+        <div class="form-group col-md-6">
+            <label for="inputCity">Correo electrónico:</label>
+            <InputText type="email" class="form-control" @bind-Value="@colaboradorModels.Correo" />
+            <ValidationMessage For="@(() => colaboradorModels.Correo)" placeholder="Correo electrónico" />
         </div>
-        <button class="btn btn-success" type="submit">Guardar Cambios</button>
-    </EditForm>
+        <div class="form-group col-md-4">
+            <label for="inputState">Teléfono(s):</label>
+            <InputText class="form-control" @bind-Value="@colaboradorModels.Telefono" />
+            <ValidationMessage For="@(() => colaboradorModels.Telefono)" placeholder="Teleéfono(s)" />
+        </div>
+    </div>
+    <MatButton Raised="true" type="submit" name="action">GUARDAR CAMBIOS</MatButton>
+    <MatButton Raised="true" OnClick="@retornar">CANCELAR</MatButton>
+    @*<button class="btn btn-success" type="submit">Guardar Cambios</button>*@
+</EditForm>
 }
 @code {
     [Parameter]
@@ -82,4 +88,10 @@ else
             Console.WriteLine("Ejecutando");
         }
     }
+
+    private void retornar()
+    {
+        navigationManager.NavigateTo("colaboradores");
+    }
+
 }

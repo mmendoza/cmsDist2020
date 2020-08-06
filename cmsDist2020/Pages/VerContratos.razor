@@ -11,62 +11,75 @@
 }
 else
 {
-    <EditForm Model="contratoModel" OnValidSubmit="CrearContratos">
-        <DataAnnotationsValidator />
-        <div class="form-group">
-            <label>Cliente:</label>
-            <InputSelect class="form-control"
-                         @bind-Value="@contratoModel.IdCliente">
-                <option value="">--Seleccione un Cliente--</option>
-                @foreach (var item in clienteSelectModel)
-                    {
-                    @if (item.IdClienteselect == contratoModel.IdCliente)
-                        {
-                        <option selected value="@item.IdClienteselect">@item.NombreCliente</option>
-                        }
-                        else
-                        {
-                        <option value="@item.IdClienteselect">@item.NombreCliente</option>
-                        }
-                    }
-            </InputSelect>
-        </div>
-        <div class="form-group">
-            <label>Colaborador:</label>
-            <InputSelect class="form-control" @bind-Value="@contratoModel.IdColaborador">
-                <option value="">--Seleccione un Colaborador--</option>
-                @foreach (var item in colaboradorSelectModel)
-                    {
-                    @if (item.IdColaboradorSelect == contratoModel.IdColaborador)
-                        {
-                        <option selected value="@item.IdColaboradorSelect">@item.NombreColaborador</option>
-                        }
-                        else
-                        {
-                        <option value="@item.IdColaboradorSelect">@item.NombreColaborador</option>
-                        }
-                    }
-            </InputSelect>
-        </div>
+<EditForm Model="contratoModel" OnValidSubmit="CrearContratos">
+    <DataAnnotationsValidator />
+    <div class="form-row">
+        <div class="form-group col-md-10">
 
-        <div class="form-group">
-            <label>N° Contrato:</label>
-            <div>
-                <InputText class="form-control" @bind-Value="@contratoModel.NroContrato" />
-                <ValidationMessage For="@(() => contratoModel.NroContrato)" />
+            <div class="form-group">
+                <label>Cliente:</label>
+                <InputSelect disabled=@_enable_ class="form-control"
+                             @bind-Value="@contratoModel.IdCliente">
+                    <option value="">--Seleccione un Cliente--</option>
+                    @foreach (var item in clienteSelectModel)
+                        {
+                        @if (item.IdClienteselect == contratoModel.IdCliente)
+                            {
+                            <option selected value="@item.IdClienteselect">@item.NombreCliente</option>
+                            }
+                            else
+                            {
+                            <option value="@item.IdClienteselect">@item.NombreCliente</option>
+                            }
+                        }
+                </InputSelect>
             </div>
         </div>
-
-        <div class="form-group">
-            <label>N° Cuotas:</label>
-            <div>
-                <InputNumber class="form-control" @bind-Value="@contratoModel.NroCuotas" />
-                <ValidationMessage For="@(() => contratoModel.NroCuotas)" />
+    </div>
+    <div class="form-row">
+        <div class="form-group col-md-10">
+            <div class="form-group">
+                <label>Colaborador:</label>
+                <InputSelect class="form-control" @bind-Value="@contratoModel.IdColaborador">
+                    <option value="">--Seleccione un Colaborador--</option>
+                    @foreach (var item in colaboradorSelectModel)
+                        {
+                        @if (item.IdColaboradorSelect == contratoModel.IdColaborador)
+                            {
+                            <option selected value="@item.IdColaboradorSelect">@item.NombreColaborador</option>
+                            }
+                            else
+                            {
+                            <option value="@item.IdColaboradorSelect">@item.NombreColaborador</option>
+                            }
+                        }
+                </InputSelect>
             </div>
         </div>
-
-        <button class="btn btn-success" type="submit">Guardar Contrato</button>
-    </EditForm>
+    </div>
+            <div class="form-row">
+                <div class="form-group col-md-2">
+                    <div class="form-group">
+                        <label>N° Contrato:</label>
+                        <div>
+                            <InputText disabled=@_enable_ class="form-control" @bind-Value="@contratoModel.NroContrato" />
+                            <ValidationMessage For="@(() => contratoModel.NroContrato)" />
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group col-md-2">
+                    <div class="form-group">
+                        <label>N° Cuotas:</label>
+                        <div>
+                            <InputNumber class="form-control" @bind-Value="@contratoModel.NroCuotas" />
+                            <ValidationMessage For="@(() => contratoModel.NroCuotas)" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <MatButton Disabled="false" Raised="true" type="submit" name="action">GRABAR CONTRATO</MatButton>
+            <MatButton Raised="true" OnClick="@retornar">CANCELAR</MatButton>
+</EditForm>
 }
 @code {
 
@@ -79,6 +92,7 @@ else
 
     public List<ClienteSelectModel> clienteSelectModel;
     public List<ColaboradorSelectModel> colaboradorSelectModel;
+    public Boolean _enable_ = false;
 
     protected override async Task OnInitializedAsync()
     {
@@ -87,6 +101,14 @@ else
         if (Id != 0)
         {
             contratoModel = await clientesAddService.GetContratoId(Id);
+            if (contratoModel.EstadoPin == "1")
+            {
+                _enable_ = false;
+            }
+            else
+            {
+                _enable_ = true;
+            }
         }
         else
         {
@@ -102,7 +124,6 @@ else
         {
             if (Id == 0)
             {
-                //contratoModel.IdEstadoContrato = "1";
                 contratoModel.IdDistribuidor = AppData.Id;
                 contratoModel.IdProducto = IdProducto;
             }
@@ -125,4 +146,10 @@ else
             Console.WriteLine("Ejecutando");
         }
     }
+
+    private void retornar()
+    {
+        navigationManager.NavigateTo("/contratos/" + IdProducto.ToString());
+    }
+
 }
