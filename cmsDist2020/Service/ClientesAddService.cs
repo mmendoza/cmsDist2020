@@ -32,7 +32,7 @@ namespace cmsDist2020.Service
                     conn.Open();
                 try
                 {
-                    await conn.ExecuteAsync("paSaveColaboradores", parameters, commandType: CommandType.StoredProcedure);
+                    await conn.ExecuteAsync("PA_CMS_SAVE_COLABORADORES", parameters, commandType: CommandType.StoredProcedure);
                 }
                 catch (Exception ex)
                 {
@@ -69,7 +69,7 @@ namespace cmsDist2020.Service
                     conn.Open();
                 try
                 {
-                    await conn.ExecuteAsync("pa_save_clientes", parameters, commandType: CommandType.StoredProcedure);
+                    await conn.ExecuteAsync("PA_CMS_SAVE_CLIENTES", parameters, commandType: CommandType.StoredProcedure);
                 }
                 catch (Exception ex)
                 {
@@ -101,7 +101,7 @@ namespace cmsDist2020.Service
                     conn.Open();
                 try
                 {
-                    await conn.ExecuteAsync("PA_SAVE_CONTRATOS", parameters, commandType: CommandType.StoredProcedure);
+                    await conn.ExecuteAsync("PA_CMS_SAVE_CONTRATOS", parameters, commandType: CommandType.StoredProcedure);
                 }
                 catch (Exception ex)
                 {
@@ -127,7 +127,7 @@ namespace cmsDist2020.Service
                     conn.Open();
                 try
                 {
-                    colaboradorModels = await conn.QueryFirstAsync<ColaboradorModel>("pa_colaborador", parameters, commandType: CommandType.StoredProcedure);
+                    colaboradorModels = await conn.QueryFirstAsync<ColaboradorModel>("PA_CMS_GET_COLABORADOR_ID", parameters, commandType: CommandType.StoredProcedure);
                 }
                 catch (Exception ex)
                 {
@@ -153,7 +153,7 @@ namespace cmsDist2020.Service
                     conn.Open();
                 try
                 {
-                    contratoModel = await conn.QueryFirstAsync<ContratoModel>("pa_Contrato_id", parameters, commandType: CommandType.StoredProcedure);
+                    contratoModel = await conn.QueryFirstAsync<ContratoModel>("PA_CMS_GET_CONTRATO_ID", parameters, commandType: CommandType.StoredProcedure);
                 }
                 catch (Exception ex)
                 {
@@ -179,7 +179,7 @@ namespace cmsDist2020.Service
                     conn.Open();
                 try
                 {
-                    var Resultados = await conn.QueryAsync<DptoModel>("pa_departamentos", commandType: CommandType.StoredProcedure);
+                    var Resultados = await conn.QueryAsync<DptoModel>("PA_CMS_DEPARTAMENTOS", commandType: CommandType.StoredProcedure);
                     dptoModel = Resultados.ToList();
                     //dptoModels = dptoModel;
                 }
@@ -205,7 +205,7 @@ namespace cmsDist2020.Service
                     conn.Open();
                 try
                 {
-                    ciudadModels = await conn.QueryAsync<CiudadModel>("pa_ciudades", commandType: CommandType.StoredProcedure);
+                    ciudadModels = await conn.QueryAsync<CiudadModel>("PA_CMS_CIUDADES", commandType: CommandType.StoredProcedure);
                 }
                 catch (Exception ex)
                 {
@@ -231,7 +231,7 @@ namespace cmsDist2020.Service
                     conn.Open();
                 try
                 {
-                    var provModel = await conn.QueryAsync<ProvModel>("pa_provincias", parameters, commandType: CommandType.StoredProcedure);
+                    var provModel = await conn.QueryAsync<ProvModel>("PA_CMS_PROVINCIAS", parameters, commandType: CommandType.StoredProcedure);
                     provModels = provModel.ToList();
                 }
                 catch (Exception ex)
@@ -258,7 +258,7 @@ namespace cmsDist2020.Service
                     conn.Open();
                 try
                 {
-                    var distModel = await conn.QueryAsync<DistModel>("pa_distritos", parameters, commandType: CommandType.StoredProcedure);
+                    var distModel = await conn.QueryAsync<DistModel>("PA_CMS_DISTRITOS", parameters, commandType: CommandType.StoredProcedure);
                     distModels = distModel.ToList();
                 }
                 catch (Exception ex)
@@ -283,7 +283,7 @@ namespace cmsDist2020.Service
                     conn.Open();
                 try
                 {
-                    var estadoModel = await conn.QueryAsync<EstadoModel>("pa_estado_clientes", commandType: CommandType.StoredProcedure);
+                    var estadoModel = await conn.QueryAsync<EstadoModel>("PA_CMS_ESTADO_CLIENTES", commandType: CommandType.StoredProcedure);
                     estadoModels = estadoModel.ToList();
                 }
                 catch (Exception ex)
@@ -303,14 +303,14 @@ namespace cmsDist2020.Service
         {
             List<ClienteSelectModel> clienteSelectModel = new List<ClienteSelectModel>();
             var parameters = new DynamicParameters();
-            parameters.Add("id_distribuidor", IdDistribuidor, DbType.Int32);
+            parameters.Add("ID_DISTRIBUIDOR", IdDistribuidor, DbType.Int32);
             using (var conn = new SqlConnection(_configuration.Value))
             {
                 if (conn.State == ConnectionState.Closed)
                     conn.Open();
                 try
                 {
-                    var estado = await conn.QueryAsync<ClienteSelectModel>("pa_Lista_Clientes", parameters, commandType: CommandType.StoredProcedure);
+                    var estado = await conn.QueryAsync<ClienteSelectModel>("PA_CMS_LISTA_CLIENTES_SELECT", parameters, commandType: CommandType.StoredProcedure);
                     clienteSelectModel = estado.ToList();
                 }
                 catch (Exception ex)
@@ -337,7 +337,7 @@ namespace cmsDist2020.Service
                     conn.Open();
                 try
                 {
-                    var colaborador = await conn.QueryAsync<ColaboradorSelectModel>("pa_lista_Colaboradores", parameters, commandType: CommandType.StoredProcedure);
+                    var colaborador = await conn.QueryAsync<ColaboradorSelectModel>("PA_CMS_LISTA_COLABORADORES", parameters, commandType: CommandType.StoredProcedure);
                     colaboradorSelectModels = colaborador.ToList();
                 }
                 catch (Exception ex)

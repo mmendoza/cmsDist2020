@@ -20,19 +20,15 @@ namespace cmsDist2020.Service
         public async Task<IEnumerable<ClientesModel>> Get_Clientes(int Id)
         {
             IEnumerable<ClientesModel> clientes_model;
+            var parameters = new DynamicParameters();
+            parameters.Add("ID_DISTRIBUIDOR", Id, DbType.Int32);
             using (var conn = new SqlConnection(_configuration.Value))
             {
-                string query = @"SELECT Id = Dat.ID_DISTRIBUIDOR_CLIENTES,RucDni = Dat.RUC_DNI,Nombre = Dat.NOMBRE_RS,ApePat = Dat.APE_PAT,Apemat = Dat.APE_MAT,Direccion = Dat.DIRECCION, " +
-                " Id_Distrito = Dat.ID_DISTRITO,Dist = rtrim(ltrim(dist.des_dis)),Prov = rtrim(ltrim(Prov.des_pro)),Dep  = rtrim(ltrim(Dep.des_dep)), Telefonos = Dat.TELEFONOS, " +
-                " Email01 = Dat.EMAIL_01,Email02 = Dat.EMAIL_02,Email03 = Dat.EMAIL_03,IdEstado = Dat.ID_ESTADO_CLIENTE,Estado = rtrim(ltrim(est.DESCRIPCION)) ,IdDistribuidor = Dat.ID_DISTRIBUIDOR " +
-                " FROM [dbo].[CMS_DISTRIBUIDOR_CLIENTES] AS Dat LEFT OUTER JOIN Distrito as Dist on Dat.ID_DISTRITO = Dist.id_distrito COLLATE DATABASE_DEFAULT LEFT OUTER JOIN Provincia as Prov on left(Dat.ID_DISTRITO,4) = Prov.id_provincia " +
-                " COLLATE DATABASE_DEFAULT LEFT OUTER JOIN Departamento as Dep on left(Dat.ID_DISTRITO,2) = Dep.id_departamento COLLATE DATABASE_DEFAULT left outer join CMS_ESTADO_CLIENTE as est on dat.ID_ESTADO_CLIENTE = est.ID_ESTADO_CLIENTE  " +
-                " where Dat.ID_DISTRIBUIDOR = " + Id.ToString();
                 if (conn.State == ConnectionState.Closed)
                     conn.Open();
                 try
                 {
-                    clientes_model = await conn.QueryAsync<ClientesModel>(query);
+                    clientes_model = await conn.QueryAsync<ClientesModel>("PA_CMS_LISTA_CLIENTES", parameters, commandType: CommandType.StoredProcedure);
                 }
                 catch (Exception ex)
                 {
@@ -58,7 +54,7 @@ namespace cmsDist2020.Service
                     conn.Open();
                 try
                 {
-                    colaboradores = await conn.QueryAsync<ColaboradorModel>("pa_colaboradores", parameters, commandType: CommandType.StoredProcedure);
+                    colaboradores = await conn.QueryAsync<ColaboradorModel>("PA_CMS_COLABORADORES", parameters, commandType: CommandType.StoredProcedure);
                 }
                 catch (Exception ex)
                 {
@@ -85,7 +81,7 @@ namespace cmsDist2020.Service
                     conn.Open();
                 try
                 {
-                    var _result = await conn.QueryAsync<ProductosModel>("pa_lista_contratos", parameters, commandType: CommandType.StoredProcedure);
+                    var _result = await conn.QueryAsync<ProductosModel>("PA_CMS_LISTA_CONTRATOS", parameters, commandType: CommandType.StoredProcedure);
                     productosModels = _result.ToList();
                 }
                 catch (Exception ex)
@@ -114,7 +110,7 @@ namespace cmsDist2020.Service
                     conn.Open();
                 try
                 {
-                    productosModels = await conn.QueryFirstOrDefaultAsync<ProductosModel>("pa_lista_contrato_id", parameters, commandType: CommandType.StoredProcedure);
+                    productosModels = await conn.QueryFirstOrDefaultAsync<ProductosModel>("PA_CMS_LISTA_CONTRATO_ID", parameters, commandType: CommandType.StoredProcedure);
                 }
                 catch (Exception ex)
                 {
@@ -149,7 +145,7 @@ string usrebookweb, string passebookweb, string nro_pin, string DET_SUSC, DateTi
 double idProducto, string nro_contrato, double id_suscripcion, double idContrato, double IdDistribuidor)
         {
             SqlConnection dataConnection = new SqlConnection(_configuration.Value);
-            SqlCommand dataCommand = new SqlCommand("pa_creacion_pines", dataConnection);
+            SqlCommand dataCommand = new SqlCommand("PA_CMS_CREA_PINES", dataConnection);
             dataCommand.CommandType = CommandType.StoredProcedure;
             dataCommand.Parameters.AddWithValue("@TipoUsuario", TipoUsuario);
             dataCommand.Parameters.AddWithValue("@PassTipoUsuario", PassTipoUsuario);
@@ -184,7 +180,7 @@ double idProducto, string nro_contrato, double id_suscripcion, double idContrato
             string nro_contrato, double id_suscripcion, double idContrato, string _hab_des)
         {
             SqlConnection dataConnection = new SqlConnection(_configuration.Value);
-            SqlCommand dataCommand = new SqlCommand("pa_habilita_desabilita_pines", dataConnection);
+            SqlCommand dataCommand = new SqlCommand("PA_CMS_HABILITA_DESABILITA_PINES", dataConnection);
             dataCommand.CommandType = CommandType.StoredProcedure;
             dataCommand.Parameters.AddWithValue("@TipoUsuario", TipoUsuario);
             dataCommand.Parameters.AddWithValue("@nro_pin", nro_pin);
@@ -226,7 +222,7 @@ double idProducto, string nro_contrato, double id_suscripcion, double idContrato
         public DataSet paLeeTipoProducto(double IdProducto)
         {
             SqlConnection dataConnection = new SqlConnection(_configuration.Value);
-            SqlCommand dataCommand = new SqlCommand("paLeeTipoProducto", dataConnection);
+            SqlCommand dataCommand = new SqlCommand("PA_CMS_LEE_TIPO_PRODUCTO", dataConnection);
             dataCommand.CommandTimeout = 220;
             dataCommand.CommandType = CommandType.StoredProcedure;
             dataCommand.Parameters.AddWithValue("@idSuscripcion", IdProducto);

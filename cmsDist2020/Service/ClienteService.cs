@@ -28,7 +28,7 @@ namespace cmsDist2020.Service
                     conn.Open();
                 try
                 {
-                    clientes_model = await conn.QueryFirstAsync<ClientesEditModel>("pa_get_cliente", parameters, commandType: CommandType.StoredProcedure);
+                    clientes_model = await conn.QueryFirstAsync<ClientesEditModel>("PA_CMS_GET_CLIENTE", parameters, commandType: CommandType.StoredProcedure);
                 }
                 catch (Exception ex)
                 {
@@ -54,7 +54,7 @@ namespace cmsDist2020.Service
                     conn.Open();
                 try
                 {
-                    colaboradorModel = await conn.QueryAsync<ColaboradorModel>("pa_coladorador_id", parameters, commandType: CommandType.StoredProcedure);
+                    colaboradorModel = await conn.QueryAsync<ColaboradorModel>("PA_CMS_GET_COLABORADOR_ID", parameters, commandType: CommandType.StoredProcedure);
                 }
                 catch (Exception ex)
                 {

@@ -4,7 +4,7 @@
 @inject cmsDist2020.Service.ClientesService clientesService
 @inject NavigationManager navigationManager
 
-<h3>Detalle de Contratos</h3>
+<h3>Lista de Contratos</h3>
 
 @if (productosModels == null)
 {
@@ -13,7 +13,7 @@
 else
 {
     <div class="form-group">
-        <MatButton Raised="true" OnClick="@CreaNuevo" Disabled="false">Registrar Nuevo</MatButton>
+        <MatButton Raised="true" OnClick="@CreaNuevo" Disabled="false">NUEVO CONTRATO</MatButton>
     </div>
     <MatTable Items="@productosModels" ShowFooter="false" ShowPaging="false" PageSize=10>
         <MatTableHeader>
